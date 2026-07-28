@@ -1,58 +1,61 @@
 package com.example.codecrest.service;
 
-import com.codecrest.dto.RankingResponseDto;
-import com.codecrest.entity.ContestRanking;
-import com.codecrest.entity.ContestantProfile;
-import com.codecrest.repository.ContestRankingRepository;
-import com.codecrest.repository.ContestantProfileRepository;
+import com.example.codecrest.dto.RankingResponseDto;
+import com.example.codecrest.entity.ContestRanking;
+import com.example.codecrest.entity.ContestantProfile;
+import com.example.codecrest.repository.ContestRankingRepository;
+import com.example.codecrest.repository.ContestantProfileRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class LeaderboardService {
 
-    private final ContestantProfileRepository profileRepository;
-    private final ContestRankingRepository rankingRepository;
-
-    public LeaderboardService(ContestantProfileRepository profileRepository, ContestRankingRepository rankingRepository) {
-        this.profileRepository = profileRepository;
-        this.rankingRepository = rankingRepository;
-    }
+    @Autowired
+    private ContestantProfileRepository profileRepository;
+    @Autowired
+    private ContestRankingRepository rankingRepository;
 
     public Page<RankingResponseDto> getGlobalLeaderboard(Pageable pageable) {
         Page<ContestantProfile> profiles = profileRepository.findAllByOrderByTotalPointsDesc(pageable);
-        List<RankingResponseDto> rankings = new ArrayList<>();
+        AtomicInteger rankCounter = new AtomicInteger((int) pageable.getOffset() + 1);
 
-        int startRank = (int) pageable.getOffset() + 1;
-        for (int i = 0; i < profiles.getContent().size(); i++) {
-            ContestantProfile p = profiles.getContent().get(i);
-            int currentRank = startRank + i;
-            p.setGlobalRank(currentRank);
-            rankings.add(new RankingResponseDto(currentRank, p.getUsername(), p.getTotalPoints()));
-        }
+        List<RankingResponseDto> rankingDtos = profiles.stream().map(profile -> {
+            RankingResponseDto dto = RankingResponseDto.builder()
+                    .rank(rankCounter.getAndIncrement())
+                    .username(profile.getUsername())
+                    .score(profile.getTotalPoints())
+                    .build();
+            profile.setGlobalRank(dto.getRank());
+            profileRepository.save(profile);
+            return dto;
+        }).toList();
 
-        return new PageImpl<>(rankings, pageable, profiles.getTotalElements());
+        return new PageImpl<>(rankingDtos, pageable, profiles.getTotalElements());
     }
 
     public Page<RankingResponseDto> getContestLeaderboard(Long contestId, Pageable pageable) {
-        Page<ContestRanking> contestRankings = rankingRepository
-                .findByContestIdOrderByCurrentScoreDescPenaltyTimeAsc(contestId, pageable);
+        Page<ContestRanking> rankings = rankingRepository.findByContestIdOrderByCurrentScoreDescPenaltyTimeAsc(contestId, pageable);
+        AtomicInteger rankCounter = new AtomicInteger((int) pageable.getOffset() + 1);
 
-        List<RankingResponseDto> dtos = new ArrayList<>();
-        int startRank = (int) pageable.getOffset() + 1;
+        List<RankingResponseDto> rankingDtos = rankings.stream().map(ranking -> {
+            int rank = rankCounter.getAndIncrement();
+            ranking.setLocalRank(rank);
+            rankingRepository.save(ranking);
 
-        for (int i = 0; i < contestRankings.getContent().size(); i++) {
-            ContestRanking cr = contestRankings.getContent().get(i);
-            int currentRank = startRank + i;
-            cr.setLocalRank(currentRank);
-            dtos.add(new RankingResponseDto(currentRank, cr.getContestant().getUsername(), cr.getCurrentScore()));
-        }
+            return RankingResponseDto.builder()
+                    .rank(rank)
+                    .username(ranking.getContestant().getUsername())
+                    .score(ranking.getCurrentScore())
+                    .build();
+        }).toList();
 
-        return new PageImpl<>(dtos, pageable, contestRankings.getTotalElements());
+        return new PageImpl<>(rankingDtos, pageable, rankings.getTotalElements());
     }
 }

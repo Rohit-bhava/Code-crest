@@ -1,46 +1,99 @@
 package com.example.codecrest.service;
 
-import com.codecrest.entity.ContestantProfile;
-import com.codecrest.exception.ResourceNotFoundException;
-import com.codecrest.repository.ContestantProfileRepository;
+import com.example.codecrest.dto.SubmissionRequestDto;
+import com.example.codecrest.dto.SubmissionResponseDto;
+import com.example.codecrest.entity.*;
+import com.example.codecrest.enums.Verdict;
+import com.example.codecrest.exception.ResourceNotFoundException;
+import com.example.codecrest.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class ProfileService {
+public class SubmissionService {
 
-    private final ContestantProfileRepository profileRepository;
+    @Autowired
+    private ChallengeSubmissionRepository submissionRepository;
+    @Autowired
+    private CodingChallengeRepository challengeRepository;
+    @Autowired
+    private ContestantProfileRepository profileRepository;
+    @Autowired
+    private ProgrammingContestRepository contestRepository;
+    @Autowired
+    private ContestRankingRepository rankingRepository;
 
-    public ProfileService(ContestantProfileRepository profileRepository) {
-        this.profileRepository = profileRepository;
-    }
+    public SubmissionResponseDto processSubmission(SubmissionRequestDto dto, String username) {
+        ContestantProfile contestant = profileRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Contestant profile not found"));
 
-    public List<ContestantProfile> getAllProfiles() {
-        return profileRepository.findAll();
-    }
+        CodingChallenge challenge = challengeRepository.findById(dto.getChallengeId())
+                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found"));
 
-    public ContestantProfile getProfileByUsername(String username) {
-        return profileRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for username: " + username));
-    }
-
-    public ContestantProfile getProfileById(Long id) {
-        return profileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found with id: " + id));
-    }
-
-    public void updateProfile(Long id, ContestantProfile updatedData) {
-        ContestantProfile profile = getProfileById(id);
-        profile.setBio(updatedData.getBio());
-        if (updatedData.getAccountStatus() != null) {
-            profile.setAccountStatus(updatedData.getAccountStatus());
+        ProgrammingContest contest = null;
+        if (dto.getContestId() != null) {
+            contest = contestRepository.findById(dto.getContestId()).orElse(null);
         }
-        profileRepository.save(profile);
+
+        Verdict verdict = Verdict.ACCEPTED;
+        int executionTime = (int) (Math.random() * 200) + 50;
+        int pointsEarned = verdict == Verdict.ACCEPTED ? challenge.getBasePoints() : 0;
+
+        ChallengeSubmission submission = ChallengeSubmission.builder()
+                .sourceCode(dto.getSourceCode())
+                .verdict(verdict)
+                .executionTimeMs(executionTime)
+                .pointsEarned(pointsEarned)
+                .contestant(contestant)
+                .challenge(challenge)
+                .contest(contest)
+                .submittedAt(LocalDateTime.now())
+                .build();
+
+        submissionRepository.save(submission);
+
+        if (verdict == Verdict.ACCEPTED) {
+            contestant.setTotalPoints(contestant.getTotalPoints() + pointsEarned);
+            profileRepository.save(contestant);
+
+            if (contest != null) {
+                ContestRanking ranking = rankingRepository.findByContestIdAndContestantId(contest.getId(), contestant.getId())
+                        .orElseGet(() -> ContestRanking.builder()
+                                .contest(contest)
+                                .contestant(contestant)
+                                .currentScore(0)
+                                .penaltyTime(0)
+                                .build());
+                ranking.setCurrentScore(ranking.getCurrentScore() + pointsEarned);
+                rankingRepository.save(ranking);
+            }
+        }
+
+        return SubmissionResponseDto.builder()
+                .submissionId(submission.getId())
+                .verdict(verdict.name())
+                .pointsEarned(pointsEarned)
+                .executionTimeMs(executionTime)
+                .message("Submission evaluated successfully")
+                .build();
     }
 
-    public void deleteProfile(Long id) {
-        ContestantProfile profile = getProfileById(id);
-        profileRepository.delete(profile);
+    public Page<ChallengeSubmission> getAllSubmissions(Pageable pageable) {
+        return submissionRepository.findAll(pageable);
+    }
+
+    public List<ChallengeSubmission> getSubmissionsByContestant(Long contestantId) {
+        return submissionRepository.findByContestantId(contestantId);
+    }
+
+    public void deleteSubmission(Long id) {
+        ChallengeSubmission submission = submissionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Submission not found with id: " + id));
+        submissionRepository.delete(submission);
     }
 }
