@@ -1,7 +1,7 @@
 package com.example.codecrest.config;
 
-import com.codecrest.entity.CodingChallenge;
-import com.codecrest.entity.SystemUser;
+import com.example.codecrest.*;codecrest.entity.CodingChallenge;
+import com.example.codecrest.entity.SystemUser;
 import com.codecrest.enums.Difficulty;
 import com.codecrest.enums.UserRole;
 import com.codecrest.repository.CodingChallengeRepository;
