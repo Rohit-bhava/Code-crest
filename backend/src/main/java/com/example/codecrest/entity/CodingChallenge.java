@@ -2,14 +2,9 @@ package com.example.codecrest.entity;
 
 import com.example.codecrest.enums.Difficulty;
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "coding_challenges")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class CodingChallenge {
 
     @Id
@@ -35,4 +30,32 @@ public class CodingChallenge {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private SystemUser setter;
+
+    public CodingChallenge() {}
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public Difficulty getDifficulty() { return difficulty; }
+    public void setDifficulty(Difficulty difficulty) { this.difficulty = difficulty; }
+
+    public Integer getBasePoints() { return basePoints; }
+    public void setBasePoints(Integer basePoints) { this.basePoints = basePoints; }
+
+    public Integer getTimeLimitMs() { return timeLimitMs; }
+    public void setTimeLimitMs(Integer timeLimitMs) { this.timeLimitMs = timeLimitMs; }
+
+    public SystemUser getSetter() { return setter; }
+    public void setSetter(SystemUser setter) { this.setter = setter; }
+
+    public static Object builder() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'builder'");
+    }
 }

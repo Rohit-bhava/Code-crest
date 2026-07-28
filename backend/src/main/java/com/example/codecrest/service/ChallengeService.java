@@ -38,7 +38,7 @@ public class ChallengeService {
         SystemUser setter = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Setter user not found"));
 
-        CodingChallenge challenge = CodingChallenge.builder()
+        CodingChallenge challenge = ((Object) CodingChallenge.builder())
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .difficulty(dto.getDifficulty())
