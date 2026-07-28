@@ -67,7 +67,7 @@ public class AuthService {
         userDto.setUsername(user.getUsername());
         userDto.setRole(user.getRole());
 
-        AuthResponseDto response = new AuthResponseDto();
+        AuthResponseDto response = new AuthResponseDto(token);
         response.setToken(token);
         response.setUser(userDto);
 
