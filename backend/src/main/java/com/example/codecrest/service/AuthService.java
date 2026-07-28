@@ -65,6 +65,6 @@ public class AuthService {
         UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getRole());
         
         // Return both token and userDto
-        return new AuthResponseDto(token, userDto);
+        return new AuthResponseDto(token);
     }
 }
