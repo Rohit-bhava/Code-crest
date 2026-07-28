@@ -1,33 +1,35 @@
 package com.example.codecrest.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "contest_rankings")
+@Table(name = "contest_rankings", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"contest_id", "contestant_id"})
+})
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ContestRanking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "contest_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contest_id", nullable = false)
     private ProgrammingContest contest;
 
-    private Integer score;
-    private Integer rank;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contestant_id", nullable = false)
+    private ContestantProfile contestant;
 
-    public ContestRanking() {}
+    @Builder.Default
+    private Integer currentScore = 0;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    @Builder.Default
+    private Integer penaltyTime = 0;
 
-    public ProgrammingContest getContest() { return contest; }
-    public void setContest(ProgrammingContest contest) { this.contest = contest; }
-
-    public Integer getScore() { return score; }
-    public void setScore(Integer score) { this.score = score; }
-
-    public Integer getRank() { return rank; }
-    public void setRank(Integer rank) { this.rank = rank; }
+    private Integer localRank;
 }

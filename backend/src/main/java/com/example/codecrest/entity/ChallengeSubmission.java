@@ -1,33 +1,46 @@
 package com.example.codecrest.entity;
 
+import com.example.codecrest.enums.Verdict;
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "challenge_submissions")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ChallengeSubmission {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String code;
-    private String status;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String sourceCode;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private SystemUser user;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Verdict verdict;
 
-    public ChallengeSubmission() {}
+    private Integer executionTimeMs;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    private Integer pointsEarned;
 
-    public String getCode() { return code; }
-    public void setCode(String code) { this.code = code; }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contestant_id", nullable = false)
+    private ContestantProfile contestant;
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "challenge_id", nullable = false)
+    private CodingChallenge challenge;
 
-    public SystemUser getUser() { return user; }
-    public void setUser(SystemUser user) { this.user = user; }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contest_id")
+    private ProgrammingContest contest;
+
+    @Column(nullable = false)
+    private LocalDateTime submittedAt;
 }

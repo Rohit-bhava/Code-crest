@@ -2,32 +2,35 @@ package com.example.codecrest.entity;
 
 import com.example.codecrest.enums.ContestStatus;
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "programming_contests")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProgrammingContest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
-    private String description;
+
+    @Column(nullable = false)
+    private LocalDateTime startTime;
+
+    @Column(nullable = false)
+    private LocalDateTime endTime;
+
+    @Column(nullable = false)
+    private Integer capacity;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ContestStatus status;
-
-    public ProgrammingContest() {}
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public ContestStatus getStatus() { return status; }
-    public void setStatus(ContestStatus status) { this.status = status; }
 }
