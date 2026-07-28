@@ -1,4 +1,4 @@
-package com.example.codecrest.enums;
+package com.codecrest.enums;
 
 public enum Difficulty {
     EASY,
