@@ -1,7 +1,7 @@
 package com.example.codecrest.enums;
 
-public enum ContestStatus {
-    UPCOMING,
-    ONGOING,
-    COMPLETED
+public enum UserRole {
+    ADMIN,
+    CONTESTANT,
+    USER
 }

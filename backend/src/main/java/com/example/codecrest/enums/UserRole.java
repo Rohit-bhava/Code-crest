@@ -4,4 +4,4 @@ public enum UserRole {
     ADMIN,
     CONTESTANT,
     USER
-}
+}   
