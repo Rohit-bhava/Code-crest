@@ -1,4 +1,4 @@
-package com.codecrest.enums;
+package com.exampcodecrest.enums;
 
 public enum UserRole {
     ROLE_PLATFORM_ADMIN,
