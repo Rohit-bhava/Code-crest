@@ -1,12 +1,11 @@
 package com.example.codecrest.controller;
 
-import com.codecrest.dto.ChallengeCreationDto;
-import com.codecrest.dto.SubmissionRequestDto;
-import com.codecrest.dto.SubmissionResponseDto;
-import com.codecrest.entity.CodingChallenge;
-import com.codecrest.service.ChallengeService;
-import com.codecrest.service.SubmissionService;
+import com.example.codecrest.dto.*;
+import com.example.codecrest.entity.CodingChallenge;
+import com.example.codecrest.service.ChallengeService;
+import com.example.codecrest.service.SubmissionService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +18,11 @@ import java.security.Principal;
 @RequestMapping("/api/challenges")
 public class ChallengeController {
 
-    private final ChallengeService challengeService;
-    private final SubmissionService submissionService;
+    @Autowired
+    private ChallengeService challengeService;
 
-    public ChallengeController(ChallengeService challengeService, SubmissionService submissionService) {
-        this.challengeService = challengeService;
-        this.submissionService = submissionService;
-    }
+    @Autowired
+    private SubmissionService submissionService;
 
     @GetMapping
     public ResponseEntity<Page<CodingChallenge>> getAllChallenges(Pageable pageable) {
@@ -60,11 +57,11 @@ public class ChallengeController {
 
     @PostMapping("/{id}/submit")
     @PreAuthorize("hasRole('ROLE_CONTESTANT')")
-    public ResponseEntity<SubmissionResponseDto> submitChallenge(@PathVariable Long id,
-                                                                  @Valid @RequestBody SubmissionRequestDto dto,
-                                                                  Principal principal) {
+    public ResponseEntity<SubmissionResponseDto> submitChallenge(
+            @PathVariable Long id,
+            @Valid @RequestBody SubmissionRequestDto dto,
+            Principal principal) {
         dto.setChallengeId(id);
-        SubmissionResponseDto response = submissionService.processSubmission(dto, principal.getName());
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(submissionService.processSubmission(dto, principal.getName()));
     }
 }

@@ -1,10 +1,9 @@
 package com.example.codecrest.controller;
 
-import com.codecrest.dto.AuthRequestDto;
-import com.codecrest.dto.AuthResponseDto;
-import com.codecrest.dto.RegisterDto;
-import com.codecrest.service.AuthService;
+import com.example.codecrest.dto.*;
+import com.example.codecrest.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,11 +11,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+    @Autowired
+    private AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@Valid @RequestBody RegisterDto dto) {
@@ -26,7 +22,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody AuthRequestDto dto) {
-        AuthResponseDto response = authService.login(dto);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(authService.login(dto));
     }
 }

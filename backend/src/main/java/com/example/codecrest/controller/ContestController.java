@@ -1,8 +1,9 @@
 package com.example.codecrest.controller;
 
-import com.codecrest.entity.ProgrammingContest;
-import com.codecrest.service.ContestService;
+import com.example.codecrest.entity.ProgrammingContest;
+import com.example.codecrest.service.ContestService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,8 @@ import java.security.Principal;
 @RequestMapping("/api/contests")
 public class ContestController {
 
-    private final ContestService contestService;
-
-    public ContestController(ContestService contestService) {
-        this.contestService = contestService;
-    }
+    @Autowired
+    private ContestService contestService;
 
     @GetMapping
     public ResponseEntity<Page<ProgrammingContest>> getAllContests(Pageable pageable) {
@@ -40,8 +38,8 @@ public class ContestController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_PLATFORM_ADMIN')")
-    public ResponseEntity<String> updateContest(@PathVariable Long id, @Valid @RequestBody ProgrammingContest details) {
-        contestService.updateContest(id, details);
+    public ResponseEntity<String> updateContest(@PathVariable Long id, @Valid @RequestBody ProgrammingContest contest) {
+        contestService.updateContest(id, contest);
         return ResponseEntity.ok("Contest updated");
     }
 
@@ -53,9 +51,8 @@ public class ContestController {
     }
 
     @PostMapping("/{id}/enroll")
-    @PreAuthorize("hasRole('ROLE_CONTESTANT')")
     public ResponseEntity<String> enrollParticipant(@PathVariable Long id, Principal principal) {
         contestService.enrollParticipant(id, principal.getName());
-        return ResponseEntity.ok("Enrolled successfully");
+        return ResponseEntity.ok("Successfully enrolled in contest");
     }
 }
