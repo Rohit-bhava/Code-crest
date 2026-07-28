@@ -3,28 +3,19 @@ package com.example.codecrest.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "contest_rankings", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"contest_id", "contestant_id"})
-})
+@Table(name = "contest_rankings")
 public class ContestRanking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "contest_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "contest_id")
     private ProgrammingContest contest;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "contestant_id", nullable = false)
-    private ContestantProfile contestant;
-
-    private Integer currentScore = 0;
-
-    private Integer penaltyTime = 0;
-
-    private Integer localRank = 0;
+    private Integer score;
+    private Integer rank;
 
     public ContestRanking() {}
 
@@ -34,15 +25,9 @@ public class ContestRanking {
     public ProgrammingContest getContest() { return contest; }
     public void setContest(ProgrammingContest contest) { this.contest = contest; }
 
-    public ContestantProfile getContestant() { return contestant; }
-    public void setContestant(ContestantProfile contestant) { this.contestant = contestant; }
+    public Integer getScore() { return score; }
+    public void setScore(Integer score) { this.score = score; }
 
-    public Integer getCurrentScore() { return currentScore; }
-    public void setCurrentScore(Integer currentScore) { this.currentScore = currentScore; }
-
-    public Integer getPenaltyTime() { return penaltyTime; }
-    public void setPenaltyTime(Integer penaltyTime) { this.penaltyTime = penaltyTime; }
-
-    public Integer getLocalRank() { return localRank; }
-    public void setLocalRank(Integer localRank) { this.localRank = localRank; }
+    public Integer getRank() { return rank; }
+    public void setRank(Integer rank) { this.rank = rank; }
 }

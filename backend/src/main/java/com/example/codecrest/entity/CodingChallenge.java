@@ -1,6 +1,6 @@
 package com.example.codecrest.entity;
 
-import com.codecrest.enums.Difficulty;
+import com.example.codecrest.enums.Difficulty;
 import jakarta.persistence.*;
 
 @Entity
