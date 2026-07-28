@@ -37,19 +37,17 @@ public class AuthService {
             throw new BusinessValidationException("Username already exists!");
         }
 
-        SystemUser user = SystemUser.builder()
-                .username(dto.getUsername())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .role(UserRole.ROLE_CONTESTANT)
-                .build();
+        SystemUser user = new SystemUser();
+        user.setUsername(dto.getUsername());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(UserRole.ROLE_CONTESTANT);
 
-        ContestantProfile profile = ContestantProfile.builder()
-                .username(dto.getUsername())
-                .bio(dto.getBio())
-                .accountStatus(AccountStatus.ACTIVE)
-                .user(user)
-                .totalPoints(0)
-                .build();
+        ContestantProfile profile = new ContestantProfile();
+        profile.setUsername(dto.getUsername());
+        profile.setBio(dto.getBio());
+        profile.setAccountStatus(AccountStatus.ACTIVE);
+        profile.setUser(user);
+        profile.setTotalPoints(0);
 
         profileRepository.save(profile);
     }
@@ -63,15 +61,16 @@ public class AuthService {
         String token = jwtUtil.generateToken(userDetails);
 
         SystemUser user = userRepository.findByUsername(dto.getUsername()).orElseThrow();
-        UserDto userDto = UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .role(user.getRole())
-                .build();
+        
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setRole(user.getRole());
 
-        return AuthResponseDto.builder()
-                .token(token)
-                .user(userDto)
-                .build();
+        AuthResponseDto response = new AuthResponseDto();
+        response.setToken(token);
+        response.setUser(userDto);
+
+        return response;
     }
 }
