@@ -1,7 +1,8 @@
 package com.example.codecrest.controller;
 
-import com.codecrest.dto.RankingResponseDto;
-import com.codecrest.service.LeaderboardService;
+import com.example.codecrest.dto.RankingResponseDto;
+import com.example.codecrest.service.LeaderboardService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/leaderboard")
 public class LeaderboardController {
 
-    private final LeaderboardService leaderboardService;
-
-    public LeaderboardController(LeaderboardService leaderboardService) {
-        this.leaderboardService = leaderboardService;
-    }
+    @Autowired
+    private LeaderboardService leaderboardService;
 
     @GetMapping("/global")
     public ResponseEntity<Page<RankingResponseDto>> getGlobalLeaderboard(Pageable pageable) {
