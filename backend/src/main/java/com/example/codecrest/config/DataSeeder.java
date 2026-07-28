@@ -1,6 +1,11 @@
 package com.example.codecrest.config;
 
-import com.example.codecrest
+
+import com.example.codecrest.entity.SystemUser;
+import com.example.codecrest.enums.Difficulty;
+import com.example.codecrest.enums.UserRole;
+import com.example.codecrest.repository.CodingChallengeRepository;
+import com.example.codecrest.repository.SystemUserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
