@@ -1,7 +1,7 @@
 package com.example.codecrest.enums;
 
 public enum UserRole {
-    ROLE_PLATFORM_ADMIN,
-    ROLE_PROBLEM_SETTER,
-    ROLE_CONTESTANT
+    ADMIN,
+    CONTESTANT,
+    USER
 }
