@@ -65,6 +65,6 @@ public class AuthService {
         SystemUser user = userRepository.findByUsername(dto.getUsername()).orElseThrow();
         
         UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getRole());
-        return new AuthResponseDto(token, userDto);
+        return new AuthResponseDto(token);
     }
 }
