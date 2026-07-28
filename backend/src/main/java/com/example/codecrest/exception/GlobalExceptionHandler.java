@@ -1,13 +1,20 @@
 package com.example.codecrest.exception;
 
-import com.codecrest.entity.ChallengeSubmission;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.List;
+@RestControllerAdvice
+public class GlobalExceptionHandler {
 
-public interface ChallengeSubmissionRepository extends JpaRepository<ChallengeSubmission, Long> {
-    List<ChallengeSubmission> findByContestantId(Long contestantId);
-    Page<ChallengeSubmission> findByContestantUsername(String username, Pageable pageable);
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<String> handleNotFound(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BusinessValidationException.class)
+    public ResponseEntity<String> handleValidation(BusinessValidationException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
