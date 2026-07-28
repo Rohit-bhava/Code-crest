@@ -44,16 +44,15 @@ public class SubmissionService {
         int executionTime = (int) (Math.random() * 200) + 50;
         int pointsEarned = verdict == Verdict.ACCEPTED ? challenge.getBasePoints() : 0;
 
-        ChallengeSubmission submission = ChallengeSubmission.builder()
-                .sourceCode(dto.getSourceCode())
-                .verdict(verdict)
-                .executionTimeMs(executionTime)
-                .pointsEarned(pointsEarned)
-                .contestant(contestant)
-                .challenge(challenge)
-                .contest(contest)
-                .submittedAt(LocalDateTime.now())
-                .build();
+        ChallengeSubmission submission = new ChallengeSubmission();
+        submission.setSourceCode(dto.getSourceCode());
+        submission.setVerdict(verdict);
+        submission.setExecutionTimeMs(executionTime);
+        submission.setPointsEarned(pointsEarned);
+        submission.setContestant(contestant);
+        submission.setChallenge(challenge);
+        submission.setContest(contest);
+        submission.setSubmittedAt(LocalDateTime.now());
 
         submissionRepository.save(submission);
 
@@ -62,25 +61,29 @@ public class SubmissionService {
             profileRepository.save(contestant);
 
             if (contest != null) {
+                final ProgrammingContest finalContest = contest;
                 ContestRanking ranking = rankingRepository.findByContestIdAndContestantId(contest.getId(), contestant.getId())
-                        .orElseGet(() -> ContestRanking.builder()
-                                .contest(contest)
-                                .contestant(contestant)
-                                .currentScore(0)
-                                .penaltyTime(0)
-                                .build());
+                        .orElseGet(() -> {
+                            ContestRanking newRanking = new ContestRanking();
+                            newRanking.setContest(finalContest);
+                            newRanking.setContestant(contestant);
+                            newRanking.setCurrentScore(0);
+                            newRanking.setPenaltyTime(0);
+                            return newRanking;
+                        });
                 ranking.setCurrentScore(ranking.getCurrentScore() + pointsEarned);
                 rankingRepository.save(ranking);
             }
         }
 
-        return SubmissionResponseDto.builder()
-                .submissionId(submission.getId())
-                .verdict(verdict.name())
-                .pointsEarned(pointsEarned)
-                .executionTimeMs(executionTime)
-                .message("Submission evaluated successfully")
-                .build();
+        SubmissionResponseDto response = new SubmissionResponseDto();
+        response.setSubmissionId(submission.getId());
+        response.setVerdict(verdict.name());
+        response.setPointsEarned(pointsEarned);
+        response.setExecutionTimeMs(executionTime);
+        response.setMessage("Submission evaluated successfully");
+
+        return response;
     }
 
     public Page<ChallengeSubmission> getAllSubmissions(Pageable pageable) {

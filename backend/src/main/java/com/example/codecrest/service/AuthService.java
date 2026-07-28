@@ -37,11 +37,13 @@ public class AuthService {
             throw new BusinessValidationException("Username already exists!");
         }
 
+        // SystemUser using manual setters
         SystemUser user = new SystemUser();
         user.setUsername(dto.getUsername());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRole(UserRole.ROLE_CONTESTANT);
 
+        // ContestantProfile using manual setters
         ContestantProfile profile = new ContestantProfile();
         profile.setUsername(dto.getUsername());
         profile.setBio(dto.getBio());
@@ -62,15 +64,7 @@ public class AuthService {
 
         SystemUser user = userRepository.findByUsername(dto.getUsername()).orElseThrow();
         
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
-        userDto.setRole(user.getRole());
-
-        AuthResponseDto response = new AuthResponseDto(token);
-        response.setToken(token);
-        response.setUser(userDto);
-
-        return response;
+        UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getRole());
+        return new AuthResponseDto(token, userDto);
     }
 }
