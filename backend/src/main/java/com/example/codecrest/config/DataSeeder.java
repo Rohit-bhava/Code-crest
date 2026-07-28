@@ -2,8 +2,8 @@ package com.example.codecrest.config;
 
 import com.example.codecrest.*;codecrest.entity.CodingChallenge;
 import com.example.codecrest.entity.SystemUser;
-import com.codecrest.enums.Difficulty;
-import com.codecrest.enums.UserRole;
+import com.example.codecrest.enums.Difficulty;
+import com.example.codecrest.enums.UserRole;
 import com.codecrest.repository.CodingChallengeRepository;
 import com.codecrest.repository.SystemUserRepository;
 import org.springframework.boot.CommandLineRunner;
