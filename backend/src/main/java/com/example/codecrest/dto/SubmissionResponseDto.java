@@ -31,4 +31,9 @@ public class SubmissionResponseDto {
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
+
+    public static Object builder() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'builder'");
+    }
 }
