@@ -1,15 +1,9 @@
 package com.example.codecrest.repository;
 
-import com.codecrest.entity.ContestRanking;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.example.codecrest.entity.ContestRanking;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
+@Repository
 public interface ContestRankingRepository extends JpaRepository<ContestRanking, Long> {
-    Optional<ContestRanking> findByContestIdAndContestantId(Long contestId, Long contestantId);
-    boolean existsByContestIdAndContestantId(Long contestId, Long contestantId);
-    long countByContestId(Long contestId);
-    Page<ContestRanking> findByContestIdOrderByCurrentScoreDescPenaltyTimeAsc(Long contestId, Pageable pageable);
 }

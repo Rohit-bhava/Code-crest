@@ -1,7 +1,9 @@
-package com.codecrest.repository;
+package com.example.codecrest.repository;
 
-import com.codecrest.entity.CodingChallenge;
+import com.example.codecrest.entity.ChallengeSubmission;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface CodingChallengeRepository extends JpaRepository<CodingChallenge, Long> {
+@Repository
+public interface CodingChallengeRepository extends JpaRepository<ChallengeSubmission, Long> {
 }
