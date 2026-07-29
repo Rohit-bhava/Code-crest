@@ -1,7 +1,11 @@
 package com.example.codecrest.service;
 
-import com.example.codecrest.dto.*;
-import com.example.codecrest.entity.*;
+import com.example.codecrest.dto.AuthRequestDto;
+import com.example.codecrest.dto.AuthResponseDto;
+import com.example.codecrest.dto.RegisterDto;
+import com.example.codecrest.dto.UserDto;
+import com.example.codecrest.entity.ContestantProfile;
+import com.example.codecrest.entity.SystemUser;
 import com.example.codecrest.enums.AccountStatus;
 import com.example.codecrest.enums.UserRole;
 import com.example.codecrest.exception.BusinessValidationException;
@@ -21,26 +25,37 @@ public class AuthService {
 
     @Autowired
     private SystemUserRepository userRepository;
+
     @Autowired
     private ContestantProfileRepository profileRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private UserDetailsService userDetailsService;
 
+
     public void register(RegisterDto dto) {
+
         if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new BusinessValidationException("Username already exists!");
+            throw new BusinessValidationException(
+                    "Username already exists!");
         }
 
         SystemUser user = new SystemUser();
         user.setUsername(dto.getUsername());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setPassword(
+                passwordEncoder.encode(dto.getPassword()));
         user.setRole(UserRole.ROLE_CONTESTANT);
+
+        user = userRepository.save(user);
 
         ContestantProfile profile = new ContestantProfile();
         profile.setUsername(dto.getUsername());
@@ -52,19 +67,38 @@ public class AuthService {
         profileRepository.save(profile);
     }
 
+
     public AuthResponseDto login(AuthRequestDto dto) {
+
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        dto.getUsername(),
+                        dto.getPassword())
         );
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(dto.getUsername());
-        String token = jwtUtil.generateToken(userDetails);
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(
+                        dto.getUsername());
 
-        SystemUser user = userRepository.findByUsername(dto.getUsername()).orElseThrow();
-        
-        UserDto userDto = new UserDto(user.getId(), user.getUsername(), user.getRole());
-        
-        // Return both token and userDto
-        return new AuthResponseDto(token);
+        String token =
+                jwtUtil.generateToken(userDetails);
+
+        SystemUser user =
+                userRepository.findByUsername(
+                                dto.getUsername())
+                        .orElseThrow(() ->
+                                new BusinessValidationException(
+                                        "User not found"));
+
+        UserDto userDto = new UserDto(
+                user.getId(),
+                user.getUsername(),
+                user.getRole()
+        );
+
+        return new AuthResponseDto(
+                token,
+                userDto
+        );
     }
 }
