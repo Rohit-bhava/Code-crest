@@ -1,10 +1,14 @@
 package com.example.codecrest.entity;
 
-import com.example.codecrest.enums.ContestStatus;
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+
+import com.example.codecrest.enums.ContestStatus;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "programming_contests")
@@ -18,19 +22,17 @@ public class ProgrammingContest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(length = 2000)
+    private String description;
+
     private LocalDateTime startTime;
 
-    @Column(nullable = false)
     private LocalDateTime endTime;
 
-    @Column(nullable = false)
     private Integer capacity;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ContestStatus status;
 }

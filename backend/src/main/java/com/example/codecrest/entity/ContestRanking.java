@@ -1,12 +1,13 @@
 package com.example.codecrest.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "contest_rankings", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"contest_id", "contestant_id"})
-})
+@Table(name = "contest_rankings")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,19 +18,15 @@ public class ContestRanking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contest_id", nullable = false)
+    @ManyToOne
     private ProgrammingContest contest;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contestant_id", nullable = false)
+    @ManyToOne
     private ContestantProfile contestant;
 
-    @Builder.Default
-    private Integer currentScore = 0;
+    private Integer currentScore;
 
-    @Builder.Default
-    private Integer penaltyTime = 0;
+    private Integer penaltyTime;
 
     private Integer localRank;
 }
