@@ -1,13 +1,11 @@
 package com.example.codecrest.entity;
 
+import com.example.codecrest.enums.AccountStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Table(name = "contestants")
+@Table(name = "contestant_profiles")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,8 +18,17 @@ public class ContestantProfile {
 
     private String username;
 
-    @Column(length = 1000)
     private String bio;
 
-    private Integer totalScore;
+    private Integer totalPoints;
+
+    private Integer globalRank;
+
+    @Enumerated(EnumType.STRING)
+    private AccountStatus accountStatus;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private SystemUser user;
+
 }

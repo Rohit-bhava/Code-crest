@@ -1,10 +1,8 @@
 package com.example.codecrest.entity;
 
+import com.example.codecrest.enums.Difficulty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "coding_challenges")
@@ -23,9 +21,15 @@ public class CodingChallenge {
     @Column(length = 3000)
     private String description;
 
-    private String difficulty;
+    @Enumerated(EnumType.STRING)
+    private Difficulty difficulty;
 
     private Integer basePoints;
 
     private Integer timeLimitMs;
+
+    @ManyToOne
+    @JoinColumn(name = "setter_id")
+    private SystemUser setter;
+
 }
