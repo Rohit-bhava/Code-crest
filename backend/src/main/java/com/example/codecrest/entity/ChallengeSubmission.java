@@ -1,10 +1,14 @@
 package com.example.codecrest.entity;
 
-import com.example.codecrest.enums.Verdict;
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+
+import com.example.codecrest.enums.Verdict;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "challenge_submissions")
@@ -18,29 +22,24 @@ public class ChallengeSubmission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String sourceCode;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Verdict verdict;
 
     private Integer executionTimeMs;
 
     private Integer pointsEarned;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contestant_id", nullable = false)
+    private LocalDateTime submittedAt;
+
+    @ManyToOne
     private ContestantProfile contestant;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "challenge_id", nullable = false)
+    @ManyToOne
     private CodingChallenge challenge;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contest_id")
+    @ManyToOne
     private ProgrammingContest contest;
-
-    @Column(nullable = false)
-    private LocalDateTime submittedAt;
 }
