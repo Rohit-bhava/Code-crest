@@ -1,11 +1,11 @@
-package com.example.codecrest.controller;
+package com.example.demo.controller;
 
-import com.example.codecrest.entity.ChallengeSubmission;
-import com.example.codecrest.entity.ContestantProfile;
-import com.example.codecrest.exception.ResourceNotFoundException;
-import com.example.codecrest.repository.ContestantProfileRepository;
-import com.example.codecrest.service.SubmissionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.entity.ChallengeSubmission;
+import com.example.demo.entity.ContestantProfile;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.ChallengeSubmissionRepository;
+import com.example.demo.repository.ContestantProfileRepository;
+import com.example.demo.service.SubmissionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,28 +19,34 @@ import java.util.List;
 @RequestMapping("/api/submissions")
 public class SubmissionController {
 
-    @Autowired
-    private SubmissionService submissionService;
+    private final ChallengeSubmissionRepository submissionRepository;
+    private final ContestantProfileRepository profileRepository;
+    private final SubmissionService submissionService;
 
-    @Autowired
-    private ContestantProfileRepository profileRepository;
+    public SubmissionController(ChallengeSubmissionRepository submissionRepository,
+                                 ContestantProfileRepository profileRepository,
+                                 SubmissionService submissionService) {
+        this.submissionRepository = submissionRepository;
+        this.profileRepository = profileRepository;
+        this.submissionService = submissionService;
+    }
 
     @GetMapping
-    public ResponseEntity<Page<ChallengeSubmission>> getAllSubmissions(Pageable pageable) {
-        return ResponseEntity.ok(submissionService.getAllSubmissions(pageable));
+    public ResponseEntity<Page<ChallengeSubmission>> getAll(Pageable pageable) {
+        return ResponseEntity.ok(submissionRepository.findAll(pageable));
     }
 
     @GetMapping("/my")
-    @PreAuthorize("hasRole('ROLE_CONTESTANT')")
-    public ResponseEntity<List<ChallengeSubmission>> getMySubmissions(Principal principal) {
+    @PreAuthorize("hasRole('CONTESTANT')")
+    public ResponseEntity<List<ChallengeSubmission>> getMy(Principal principal) {
         ContestantProfile profile = profileRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
-        return ResponseEntity.ok(submissionService.getSubmissionsByContestant(profile.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for current user"));
+        return ResponseEntity.ok(submissionRepository.findByContestantId(profile.getId()));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_PLATFORM_ADMIN')")
-    public ResponseEntity<String> deleteSubmission(@PathVariable Long id) {
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         submissionService.deleteSubmission(id);
         return ResponseEntity.ok("Submission deleted");
     }

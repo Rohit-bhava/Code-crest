@@ -1,9 +1,8 @@
-package com.example.codecrest.controller;
+package com.example.demo.controller;
 
-import com.example.codecrest.entity.ContestantProfile;
-import com.example.codecrest.exception.ResourceNotFoundException;
-import com.example.codecrest.repository.ContestantProfileRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.entity.ContestantProfile;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.ContestantProfileRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -15,37 +14,43 @@ import java.util.List;
 @RequestMapping("/api/profiles")
 public class ProfileController {
 
-    @Autowired
-    private ContestantProfileRepository profileRepository;
+    private final ContestantProfileRepository profileRepository;
+
+    public ProfileController(ContestantProfileRepository profileRepository) {
+        this.profileRepository = profileRepository;
+    }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_PLATFORM_ADMIN')")
-    public ResponseEntity<List<ContestantProfile>> getAllProfiles() {
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    public ResponseEntity<List<ContestantProfile>> getAll() {
         return ResponseEntity.ok(profileRepository.findAll());
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ContestantProfile> getMyProfile(Principal principal) {
+    public ResponseEntity<ContestantProfile> getMe(Principal principal) {
         ContestantProfile profile = profileRepository.findByUsername(principal.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for current user"));
         return ResponseEntity.ok(profile);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateProfile(@PathVariable Long id, @RequestBody ContestantProfile updatedData) {
-        ContestantProfile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
-        profile.setBio(updatedData.getBio());
-        profileRepository.save(profile);
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ContestantProfile profile) {
+        ContestantProfile existing = profileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found with id: " + id));
+        existing.setBio(profile.getBio());
+        if (profile.getUsername() != null) {
+            existing.setUsername(profile.getUsername());
+        }
+        profileRepository.save(existing);
         return ResponseEntity.ok("Profile updated");
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_PLATFORM_ADMIN')")
-    public ResponseEntity<String> deleteProfile(@PathVariable Long id) {
-        ContestantProfile profile = profileRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found"));
-        profileRepository.delete(profile);
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    public ResponseEntity<String> delete(@PathVariable Long id) {
+        ContestantProfile existing = profileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found with id: " + id));
+        profileRepository.delete(existing);
         return ResponseEntity.ok("Profile deleted");
     }
 }

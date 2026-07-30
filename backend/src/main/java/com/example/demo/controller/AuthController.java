@@ -1,9 +1,9 @@
-package com.example.codecrest.controller;
+package com.example.demo.controller;
 
-import com.example.codecrest.dto.*;
-import com.example.codecrest.service.AuthService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.dto.AuthRequestDto;
+import com.example.demo.dto.AuthResponseDto;
+import com.example.demo.dto.RegisterDto;
+import com.example.demo.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,17 +11,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterDto dto) {
+    public ResponseEntity<String> register(@RequestBody RegisterDto dto) {
         authService.register(dto);
         return ResponseEntity.ok("Registration successful");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody AuthRequestDto dto) {
-        return ResponseEntity.ok(authService.login(dto));
+    public ResponseEntity<AuthResponseDto> login(@RequestBody AuthRequestDto dto) {
+        AuthResponseDto response = authService.login(dto);
+        return ResponseEntity.ok(response);
     }
 }
