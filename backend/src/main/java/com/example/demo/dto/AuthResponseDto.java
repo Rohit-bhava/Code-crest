@@ -1,23 +1,30 @@
-package com.example.codecrest.dto;
+package com.example.demo.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class AuthResponseDto {
-
     private String token;
-
     private UserDto user;
 
-
-    public AuthResponseDto(String token) {
-
-        this.token = token;
-
+    public AuthResponseDto() {
     }
 
+    public AuthResponseDto(String token, UserDto user) {
+        this.token = token;
+        this.user = user;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public UserDto getUser() {
+        return user;
+    }
+
+    public void setUser(UserDto user) {
+        this.user = user;
+    }
 }
