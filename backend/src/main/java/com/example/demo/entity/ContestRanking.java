@@ -1,17 +1,9 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "contest_rankings")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(name = "contest_rankings", uniqueConstraints = @UniqueConstraint(columnNames = {"contest_id", "contestant_id"}))
 public class ContestRanking {
 
     @Id
@@ -19,14 +11,67 @@ public class ContestRanking {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "contest_id")
     private ProgrammingContest contest;
 
     @ManyToOne
+    @JoinColumn(name = "contestant_id")
     private ContestantProfile contestant;
 
-    private Integer currentScore;
+    private Integer currentScore = 0;
 
-    private Integer penaltyTime;
+    private Integer penaltyTime = 0;
 
     private Integer localRank;
+
+    public ContestRanking() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public ProgrammingContest getContest() {
+        return contest;
+    }
+
+    public void setContest(ProgrammingContest contest) {
+        this.contest = contest;
+    }
+
+    public ContestantProfile getContestant() {
+        return contestant;
+    }
+
+    public void setContestant(ContestantProfile contestant) {
+        this.contestant = contestant;
+    }
+
+    public Integer getCurrentScore() {
+        return currentScore;
+    }
+
+    public void setCurrentScore(Integer currentScore) {
+        this.currentScore = currentScore;
+    }
+
+    public Integer getPenaltyTime() {
+        return penaltyTime;
+    }
+
+    public void setPenaltyTime(Integer penaltyTime) {
+        this.penaltyTime = penaltyTime;
+    }
+
+    public Integer getLocalRank() {
+        return localRank;
+    }
+
+    public void setLocalRank(Integer localRank) {
+        this.localRank = localRank;
+    }
 }

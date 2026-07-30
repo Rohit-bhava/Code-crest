@@ -1,20 +1,11 @@
 package com.example.demo.entity;
 
-import java.time.LocalDateTime;
-
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "challenge_submissions")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ChallengeSubmission {
 
     @Id
@@ -31,14 +22,92 @@ public class ChallengeSubmission {
 
     private Integer pointsEarned;
 
-    private LocalDateTime submittedAt;
-
     @ManyToOne
+    @JoinColumn(name = "contestant_id")
     private ContestantProfile contestant;
 
     @ManyToOne
+    @JoinColumn(name = "challenge_id")
     private CodingChallenge challenge;
 
     @ManyToOne
+    @JoinColumn(name = "contest_id")
     private ProgrammingContest contest;
+
+    private LocalDateTime submittedAt;
+
+    public ChallengeSubmission() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSourceCode() {
+        return sourceCode;
+    }
+
+    public void setSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
+    }
+
+    public Verdict getVerdict() {
+        return verdict;
+    }
+
+    public void setVerdict(Verdict verdict) {
+        this.verdict = verdict;
+    }
+
+    public Integer getExecutionTimeMs() {
+        return executionTimeMs;
+    }
+
+    public void setExecutionTimeMs(Integer executionTimeMs) {
+        this.executionTimeMs = executionTimeMs;
+    }
+
+    public Integer getPointsEarned() {
+        return pointsEarned;
+    }
+
+    public void setPointsEarned(Integer pointsEarned) {
+        this.pointsEarned = pointsEarned;
+    }
+
+    public ContestantProfile getContestant() {
+        return contestant;
+    }
+
+    public void setContestant(ContestantProfile contestant) {
+        this.contestant = contestant;
+    }
+
+    public CodingChallenge getChallenge() {
+        return challenge;
+    }
+
+    public void setChallenge(CodingChallenge challenge) {
+        this.challenge = challenge;
+    }
+
+    public ProgrammingContest getContest() {
+        return contest;
+    }
+
+    public void setContest(ProgrammingContest contest) {
+        this.contest = contest;
+    }
+
+    public LocalDateTime getSubmittedAt() {
+        return submittedAt;
+    }
+
+    public void setSubmittedAt(LocalDateTime submittedAt) {
+        this.submittedAt = submittedAt;
+    }
 }
