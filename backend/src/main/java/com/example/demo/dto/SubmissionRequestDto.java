@@ -1,21 +1,34 @@
-package com.example.codecrest.dto;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+package com.example.demo.dto;
 
 public class SubmissionRequestDto {
-    @NotNull
     private Long challengeId;
     private Long contestId;
-    @NotBlank
     private String sourceCode;
 
-    public Long getChallengeId() { return challengeId; }
-    public void setChallengeId(Long challengeId) { this.challengeId = challengeId; }
+    public SubmissionRequestDto() {
+    }
 
-    public Long getContestId() { return contestId; }
-    public void setContestId(Long contestId) { this.contestId = contestId; }
+    public Long getChallengeId() {
+        return challengeId;
+    }
 
-    public String getSourceCode() { return sourceCode; }
-    public void setSourceCode(String sourceCode) { this.sourceCode = sourceCode; }
+    public void setChallengeId(Long challengeId) {
+        this.challengeId = challengeId;
+    }
+
+    public Long getContestId() {
+        return contestId;
+    }
+
+    public void setContestId(Long contestId) {
+        this.contestId = contestId;
+    }
+
+    public String getSourceCode() {
+        return sourceCode;
+    }
+
+    public void setSourceCode(String sourceCode) {
+        this.sourceCode = sourceCode;
+    }
 }
