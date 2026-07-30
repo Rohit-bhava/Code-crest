@@ -1,38 +1,32 @@
-package com.example.codecrest.service;
+package com.example.demo.service;
 
-import com.example.codecrest.entity.ContestRanking;
-import com.example.codecrest.entity.ContestantProfile;
-import com.example.codecrest.entity.ProgrammingContest;
-import com.example.codecrest.enums.ContestStatus;
-import com.example.codecrest.exception.BusinessValidationException;
-import com.example.codecrest.exception.ResourceNotFoundException;
-import com.example.codecrest.repository.ContestRankingRepository;
-import com.example.codecrest.repository.ContestantProfileRepository;
-import com.example.codecrest.repository.ProgrammingContestRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.example.demo.entity.*;
+import com.example.demo.exception.BusinessValidationException;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.ContestRankingRepository;
+import com.example.demo.repository.ContestantProfileRepository;
+import com.example.demo.repository.ProgrammingContestRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class ContestService {
 
-    @Autowired
-    private ProgrammingContestRepository contestRepository;
-    @Autowired
-    private ContestantProfileRepository profileRepository;
-    @Autowired
-    private ContestRankingRepository rankingRepository;
+    private final ProgrammingContestRepository contestRepository;
+    private final ContestantProfileRepository contestantProfileRepository;
+    private final ContestRankingRepository contestRankingRepository;
+
+    public ContestService(ProgrammingContestRepository contestRepository,
+                           ContestantProfileRepository contestantProfileRepository,
+                           ContestRankingRepository contestRankingRepository) {
+        this.contestRepository = contestRepository;
+        this.contestantProfileRepository = contestantProfileRepository;
+        this.contestRankingRepository = contestRankingRepository;
+    }
 
     public List<ProgrammingContest> getAllContests() {
         return contestRepository.findAll();
-    }
-
-    public Page<ProgrammingContest> getAllContestsPaged(Pageable pageable) {
-        return contestRepository.findAll(pageable);
     }
 
     public ProgrammingContest getContestById(Long id) {
@@ -41,14 +35,9 @@ public class ContestService {
     }
 
     public void createContest(ProgrammingContest contest) {
-        if (contest.getStartTime().isBefore(LocalDateTime.now())) {
-            throw new BusinessValidationException("Start time must be in the future");
-        }
-        if (contest.getStartTime().isAfter(contest.getEndTime())) {
+        if (contest.getStartTime() != null && contest.getEndTime() != null
+                && !contest.getStartTime().isBefore(contest.getEndTime())) {
             throw new BusinessValidationException("Start time must precede end time");
-        }
-        if (contest.getCapacity() <= 0) {
-            throw new BusinessValidationException("Capacity must be a positive integer");
         }
         if (contest.getStatus() == null) {
             contest.setStatus(ContestStatus.UPCOMING);
@@ -75,28 +64,22 @@ public class ContestService {
         ProgrammingContest contest = getContestById(contestId);
 
         if (contest.getStatus() != ContestStatus.UPCOMING) {
-            throw new BusinessValidationException("Enrollment is only allowed for UPCOMING contests.");
+            throw new BusinessValidationException("Cannot enroll in a contest that is not upcoming");
         }
 
-        long enrolledCount = rankingRepository.countByContestId(contestId);
-        if (enrolledCount >= contest.getCapacity()) {
-            throw new BusinessValidationException("Contest has reached maximum capacity.");
-        }
+        ContestantProfile contestant = contestantProfileRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for user: " + username));
 
-        ContestantProfile profile = profileRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Contestant profile not found."));
+        contestRankingRepository.findByContestIdAndContestantId(contestId, contestant.getId())
+                .ifPresent(r -> {
+                    throw new BusinessValidationException("Already enrolled in this contest");
+                });
 
-        if (rankingRepository.findByContestIdAndContestantId(contestId, profile.getId()).isPresent()) {
-            throw new BusinessValidationException("Participant already enrolled in this contest.");
-        }
-
-        ContestRanking ranking = ContestRanking.builder()
-                .contest(contest)
-                .contestant(profile)
-                .currentScore(0)
-                .penaltyTime(0)
-                .build();
-
-        rankingRepository.save(ranking);
+        ContestRanking ranking = new ContestRanking();
+        ranking.setContest(contest);
+        ranking.setContestant(contestant);
+        ranking.setCurrentScore(0);
+        ranking.setPenaltyTime(0);
+        contestRankingRepository.save(ranking);
     }
 }

@@ -1,48 +1,76 @@
-package com.example.codecrest.service;
+package com.example.demo.service;
 
-import com.example.codecrest.dto.SubmissionRequestDto;
-import com.example.codecrest.dto.SubmissionResponseDto;
-import com.example.codecrest.entity.*;
-import com.example.codecrest.enums.Verdict;
-import com.example.codecrest.exception.ResourceNotFoundException;
-import com.example.codecrest.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.example.demo.dto.SubmissionRequestDto;
+import com.example.demo.dto.SubmissionResponseDto;
+import com.example.demo.entity.*;
+import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Random;
 
 @Service
 public class SubmissionService {
 
-    @Autowired
-    private ChallengeSubmissionRepository submissionRepository;
-    @Autowired
-    private CodingChallengeRepository challengeRepository;
-    @Autowired
-    private ContestantProfileRepository profileRepository;
-    @Autowired
-    private ProgrammingContestRepository contestRepository;
-    @Autowired
-    private ContestRankingRepository rankingRepository;
+    private final ChallengeSubmissionRepository submissionRepository;
+    private final CodingChallengeRepository challengeRepository;
+    private final ContestantProfileRepository contestantProfileRepository;
+    private final ProgrammingContestRepository contestRepository;
+    private final ContestRankingRepository contestRankingRepository;
+    private final Random random = new Random();
+
+    public SubmissionService(ChallengeSubmissionRepository submissionRepository,
+                              CodingChallengeRepository challengeRepository,
+                              ContestantProfileRepository contestantProfileRepository,
+                              ProgrammingContestRepository contestRepository,
+                              ContestRankingRepository contestRankingRepository) {
+        this.submissionRepository = submissionRepository;
+        this.challengeRepository = challengeRepository;
+        this.contestantProfileRepository = contestantProfileRepository;
+        this.contestRepository = contestRepository;
+        this.contestRankingRepository = contestRankingRepository;
+    }
 
     public SubmissionResponseDto processSubmission(SubmissionRequestDto dto, String username) {
-        ContestantProfile contestant = profileRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Contestant profile not found"));
-
         CodingChallenge challenge = challengeRepository.findById(dto.getChallengeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found with id: " + dto.getChallengeId()));
+
+        ContestantProfile contestant = contestantProfileRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for user: " + username));
 
         ProgrammingContest contest = null;
         if (dto.getContestId() != null) {
-            contest = contestRepository.findById(dto.getContestId()).orElse(null);
+            contest = contestRepository.findById(dto.getContestId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Contest not found with id: " + dto.getContestId()));
         }
 
-        Verdict verdict = Verdict.ACCEPTED;
-        int executionTime = (int) (Math.random() * 200) + 50;
-        int pointsEarned = verdict == Verdict.ACCEPTED ? challenge.getBasePoints() : 0;
+        Verdict verdict = simulateVerdict();
+        int executionTime = 50 + random.nextInt(950);
+        int pointsEarned = 0;
+
+        if (verdict == Verdict.ACCEPTED) {
+            double efficiencyFactor = Math.max(0.5, 1.0 - (executionTime / (double) Math.max(1, challenge.getTimeLimitMs())));
+            pointsEarned = (int) Math.round(challenge.getBasePoints() * efficiencyFactor);
+
+            contestant.setTotalPoints(contestant.getTotalPoints() + pointsEarned);
+            contestantProfileRepository.save(contestant);
+
+            if (contest != null) {
+                ContestRanking ranking = contestRankingRepository
+                        .findByContestIdAndContestantId(contest.getId(), contestant.getId())
+                        .orElseGet(() -> {
+                            ContestRanking r = new ContestRanking();
+                            r.setContest(contest);
+                            r.setContestant(contestant);
+                            r.setCurrentScore(0);
+                            r.setPenaltyTime(0);
+                            return r;
+                        });
+                ranking.setCurrentScore(ranking.getCurrentScore() + pointsEarned);
+                contestRankingRepository.save(ranking);
+            }
+        }
 
         ChallengeSubmission submission = new ChallengeSubmission();
         submission.setSourceCode(dto.getSourceCode());
@@ -53,50 +81,25 @@ public class SubmissionService {
         submission.setChallenge(challenge);
         submission.setContest(contest);
         submission.setSubmittedAt(LocalDateTime.now());
+        submission = submissionRepository.save(submission);
 
-        submissionRepository.save(submission);
+        String message = verdict == Verdict.ACCEPTED ? "Solution accepted" : "Solution did not pass all test cases";
 
-        if (verdict == Verdict.ACCEPTED) {
-            contestant.setTotalPoints(contestant.getTotalPoints() + pointsEarned);
-            profileRepository.save(contestant);
-
-            if (contest != null) {
-                final ProgrammingContest finalContest = contest;
-                ContestRanking ranking = rankingRepository.findByContestIdAndContestantId(contest.getId(), contestant.getId())
-                        .orElseGet(() -> {
-                            ContestRanking newRanking = new ContestRanking();
-                            newRanking.setContest(finalContest);
-                            newRanking.setContestant(contestant);
-                            newRanking.setCurrentScore(0);
-                            newRanking.setPenaltyTime(0);
-                            return newRanking;
-                        });
-                ranking.setCurrentScore(ranking.getCurrentScore() + pointsEarned);
-                rankingRepository.save(ranking);
-            }
-        }
-
-        SubmissionResponseDto response = new SubmissionResponseDto();
-        response.setSubmissionId(submission.getId());
-        response.setVerdict(verdict.name());
-        response.setPointsEarned(pointsEarned);
-        response.setExecutionTimeMs(executionTime);
-        response.setMessage("Submission evaluated successfully");
-
-        return response;
-    }
-
-    public Page<ChallengeSubmission> getAllSubmissions(Pageable pageable) {
-        return submissionRepository.findAll(pageable);
-    }
-
-    public List<ChallengeSubmission> getSubmissionsByContestant(Long contestantId) {
-        return submissionRepository.findByContestantId(contestantId);
+        return new SubmissionResponseDto(submission.getId(), verdict.name(), pointsEarned, executionTime, message);
     }
 
     public void deleteSubmission(Long id) {
         ChallengeSubmission submission = submissionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Submission not found with id: " + id));
         submissionRepository.delete(submission);
+    }
+
+    private Verdict simulateVerdict() {
+        Verdict[] verdicts = Verdict.values();
+        // weight towards ACCEPTED for a reasonable demo experience
+        if (random.nextInt(100) < 60) {
+            return Verdict.ACCEPTED;
+        }
+        return verdicts[1 + random.nextInt(verdicts.length - 1)];
     }
 }
