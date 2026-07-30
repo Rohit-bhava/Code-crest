@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.codecrest.dto;
 
 public class AuthRequestDto {
     private String username;

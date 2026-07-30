@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.codecrest.dto;
 
 public class RegisterDto {
     private String username;
