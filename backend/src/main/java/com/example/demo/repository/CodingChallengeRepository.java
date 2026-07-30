@@ -1,6 +1,7 @@
-package com.example.codecrest.repository;
+package com.example.demo.repository;
 
-import com.example.codecrest.entity.CodingChallenge;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.demo.entity.CodingChallenge;
 
 public interface CodingChallengeRepository extends JpaRepository<CodingChallenge, Long> {}

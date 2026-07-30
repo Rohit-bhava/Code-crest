@@ -1,6 +1,6 @@
-package com.example.codecrest.dto;
+package com.example.demo.dto;
 
-public class RegisterDto {
+public class AuthRequestDto {
     private String username;
     private String password;
 

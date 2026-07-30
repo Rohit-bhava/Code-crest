@@ -1,17 +1,5 @@
-package com.example.codecrest.service;
+package com.example.demo.service;
 
-import com.example.codecrest.dto.AuthRequestDto;
-import com.example.codecrest.dto.AuthResponseDto;
-import com.example.codecrest.dto.RegisterDto;
-import com.example.codecrest.dto.UserDto;
-import com.example.codecrest.entity.ContestantProfile;
-import com.example.codecrest.entity.SystemUser;
-import com.example.codecrest.enums.AccountStatus;
-import com.example.codecrest.enums.UserRole;
-import com.example.codecrest.exception.BusinessValidationException;
-import com.example.codecrest.repository.ContestantProfileRepository;
-import com.example.codecrest.repository.SystemUserRepository;
-import com.example.codecrest.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,6 +7,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.example.demo.dto.AuthRequestDto;
+import com.example.demo.dto.AuthResponseDto;
+import com.example.demo.dto.RegisterDto;
+import com.example.demo.dto.UserDto;
+import com.example.demo.entity.ContestantProfile;
+import com.example.demo.entity.SystemUser;
+import com.example.demo.enums.AccountStatus;
+import com.example.demo.enums.UserRole;
+import com.example.demo.exception.BusinessValidationException;
+import com.example.demo.repository.ContestantProfileRepository;
+import com.example.demo.repository.SystemUserRepository;
+import com.example.demo.security.JwtUtil;
 
 @Service
 public class AuthService {

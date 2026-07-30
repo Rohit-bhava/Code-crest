@@ -1,6 +1,7 @@
-package com.example.codecrest.repository;
+package com.example.demo.repository;
 
-import com.example.codecrest.entity.ProgrammingContest;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.demo.entity.ProgrammingContest;
 
 public interface ProgrammingContestRepository extends JpaRepository<ProgrammingContest, Long> {}
