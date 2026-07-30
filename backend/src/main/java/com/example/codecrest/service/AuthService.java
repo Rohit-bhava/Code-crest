@@ -44,7 +44,7 @@ public class AuthService {
 
     public void register(RegisterDto dto) {
 
-        if (userRepository.existsByUsername(dto.getUsername())) {
+        if (userRepository.existsById(dto.getUsername())) {
             throw new BusinessValidationException(
                     "Username already exists!");
         }
