@@ -1,7 +1,7 @@
 package com.example.demo.repository;
 
+import com.example.demo.entity.CodingChallenge;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.demo.entity.CodingChallenge;
-
-public interface CodingChallengeRepository extends JpaRepository<CodingChallenge, Long> {}
+public interface CodingChallengeRepository extends JpaRepository<CodingChallenge, Long> {
+}

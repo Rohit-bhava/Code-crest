@@ -1,6 +1,6 @@
-package com.example.codecrest.repository;
+package com.example.demo.repository;
 
-import com.example.codecrest.entity.ContestantProfile;
+import com.example.demo.entity.ContestantProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface ContestantProfileRepository extends JpaRepository<ContestantProfile, Long> {
     Optional<ContestantProfile> findByUsername(String username);
-    Optional<ContestantProfile> findByUserId(Long userId);
+
     Page<ContestantProfile> findAllByOrderByTotalPointsDesc(Pageable pageable);
 }
