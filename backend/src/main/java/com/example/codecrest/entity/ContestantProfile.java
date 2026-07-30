@@ -1,34 +1,19 @@
-package com.example.codecrest.entity;
+package com.example.demo.entity;
 
-import com.example.codecrest.enums.AccountStatus;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
-@Table(name = "contestant_profiles")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ContestantProfile {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String username;
-
     private String bio;
 
-    private Integer totalPoints;
-
-    private Integer globalRank;
-
-    @Enumerated(EnumType.STRING)
-    private AccountStatus accountStatus;
-
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private SystemUser user;
-
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
 }

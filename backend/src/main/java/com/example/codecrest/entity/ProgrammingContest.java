@@ -1,38 +1,19 @@
-package com.example.codecrest.entity;
+package com.example.demo.entity;
 
-import java.time.LocalDateTime;
-
-import com.example.codecrest.enums.ContestStatus;
-
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
-@Table(name = "programming_contests")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class ProgrammingContest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String name;
 
-    private String title;
-
-    @Column(length = 2000)
-    private String description;
-
-    private LocalDateTime startTime;
-
-    private LocalDateTime endTime;
-
-    private Integer capacity;
-
-    @Enumerated(EnumType.STRING)
-    private ContestStatus status;
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 }
