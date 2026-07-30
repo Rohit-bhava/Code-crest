@@ -20,11 +20,13 @@ public class SubmissionService {
     private final ContestRankingRepository contestRankingRepository;
     private final Random random = new Random();
 
-    public SubmissionService(ChallengeSubmissionRepository submissionRepository,
-                              CodingChallengeRepository challengeRepository,
-                              ContestantProfileRepository contestantProfileRepository,
-                              ProgrammingContestRepository contestRepository,
-                              ContestRankingRepository contestRankingRepository) {
+    public SubmissionService(
+            ChallengeSubmissionRepository submissionRepository,
+            CodingChallengeRepository challengeRepository,
+            ContestantProfileRepository contestantProfileRepository,
+            ProgrammingContestRepository contestRepository,
+            ContestRankingRepository contestRankingRepository) {
+
         this.submissionRepository = submissionRepository;
         this.challengeRepository = challengeRepository;
         this.contestantProfileRepository = contestantProfileRepository;
@@ -33,30 +35,42 @@ public class SubmissionService {
     }
 
     public SubmissionResponseDto processSubmission(SubmissionRequestDto dto, String username) {
+
         CodingChallenge challenge = challengeRepository.findById(dto.getChallengeId())
-                .orElseThrow(() -> new ResourceNotFoundException("Challenge not found with id: " + dto.getChallengeId()));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Challenge not found with id: " + dto.getChallengeId()));
 
         ContestantProfile contestant = contestantProfileRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for user: " + username));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Profile not found for user: " + username));
 
-        ProgrammingContest contest = null;
-        if (dto.getContestId() != null) {
-            contest = contestRepository.findById(dto.getContestId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Contest not found with id: " + dto.getContestId()));
-        }
+        final ProgrammingContest contest =
+                dto.getContestId() == null
+                        ? null
+                        : contestRepository.findById(dto.getContestId())
+                                .orElseThrow(() -> new ResourceNotFoundException(
+                                        "Contest not found with id: " + dto.getContestId()));
 
         Verdict verdict = simulateVerdict();
         int executionTime = 50 + random.nextInt(950);
         int pointsEarned = 0;
 
         if (verdict == Verdict.ACCEPTED) {
-            double efficiencyFactor = Math.max(0.5, 1.0 - (executionTime / (double) Math.max(1, challenge.getTimeLimitMs())));
-            pointsEarned = (int) Math.round(challenge.getBasePoints() * efficiencyFactor);
+
+            double efficiencyFactor = Math.max(
+                    0.5,
+                    1.0 - (executionTime / (double) Math.max(1, challenge.getTimeLimitMs()))
+            );
+
+            pointsEarned = (int) Math.round(
+                    challenge.getBasePoints() * efficiencyFactor
+            );
 
             contestant.setTotalPoints(contestant.getTotalPoints() + pointsEarned);
             contestantProfileRepository.save(contestant);
 
             if (contest != null) {
+
                 ContestRanking ranking = contestRankingRepository
                         .findByContestIdAndContestantId(contest.getId(), contestant.getId())
                         .orElseGet(() -> {
@@ -67,6 +81,7 @@ public class SubmissionService {
                             r.setPenaltyTime(0);
                             return r;
                         });
+
                 ranking.setCurrentScore(ranking.getCurrentScore() + pointsEarned);
                 contestRankingRepository.save(ranking);
             }
@@ -81,25 +96,40 @@ public class SubmissionService {
         submission.setChallenge(challenge);
         submission.setContest(contest);
         submission.setSubmittedAt(LocalDateTime.now());
+
         submission = submissionRepository.save(submission);
 
-        String message = verdict == Verdict.ACCEPTED ? "Solution accepted" : "Solution did not pass all test cases";
+        String message = verdict == Verdict.ACCEPTED
+                ? "Solution accepted"
+                : "Solution did not pass all test cases";
 
-        return new SubmissionResponseDto(submission.getId(), verdict.name(), pointsEarned, executionTime, message);
+        return new SubmissionResponseDto(
+                submission.getId(),
+                verdict.name(),
+                pointsEarned,
+                executionTime,
+                message
+        );
     }
 
     public void deleteSubmission(Long id) {
+
         ChallengeSubmission submission = submissionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Submission not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Submission not found with id: " + id));
+
         submissionRepository.delete(submission);
     }
 
     private Verdict simulateVerdict() {
+
         Verdict[] verdicts = Verdict.values();
-        // weight towards ACCEPTED for a reasonable demo experience
+
+        // 60% chance of ACCEPTED
         if (random.nextInt(100) < 60) {
             return Verdict.ACCEPTED;
         }
+
         return verdicts[1 + random.nextInt(verdicts.length - 1)];
     }
 }
