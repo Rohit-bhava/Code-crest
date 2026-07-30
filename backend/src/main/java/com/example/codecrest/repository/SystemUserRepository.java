@@ -1,8 +1,10 @@
-package com.example.demo.repository;
+package com.example.codecrest.repository;
 
-import com.example.demo.entity.SystemUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.example.codecrest.entity.SystemUser;
+
 import java.util.Optional;
 
 @Repository
