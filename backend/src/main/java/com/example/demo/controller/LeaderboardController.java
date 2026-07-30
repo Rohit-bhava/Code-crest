@@ -1,22 +1,27 @@
-package com.example.codecrest.controller;
+package com.example.demo.controller;
 
-import com.example.codecrest.dto.RankingResponseDto;
-import com.example.codecrest.service.LeaderboardService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.dto.RankingResponseDto;
+import com.example.demo.service.LeaderboardService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/leaderboard")
 public class LeaderboardController {
 
-    @Autowired
-    private LeaderboardService leaderboardService;
+    private final LeaderboardService leaderboardService;
+
+    public LeaderboardController(LeaderboardService leaderboardService) {
+        this.leaderboardService = leaderboardService;
+    }
 
     @GetMapping("/global")
-    public ResponseEntity<Page<RankingResponseDto>> getGlobalLeaderboard(Pageable pageable) {
+    public ResponseEntity<Page<RankingResponseDto>> getGlobal(Pageable pageable) {
         return ResponseEntity.ok(leaderboardService.getGlobalLeaderboard(pageable));
     }
 
