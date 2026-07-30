@@ -1,8 +1,7 @@
-package com.example.codecrest.entity;
+package com.example.demo.entity;
 
 import java.time.LocalDateTime;
 
-import com.example.codecrest.enums.Verdict;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
