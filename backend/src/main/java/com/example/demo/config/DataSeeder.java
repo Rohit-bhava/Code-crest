@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class DataSeeder implements CommandLineRunner {
 
     private final SystemUserRepository systemUserRepository;
-    private final ContestantProfileRepository contestantProfileRepository;
+    private final ContestantProfileRepository contestantProfilerepository;
     private final CodingChallengeRepository challengeRepository;
     private final PasswordEncoder passwordEncoder;
 
