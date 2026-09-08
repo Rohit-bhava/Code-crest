@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../store/slices/authSlice';
+import { logout } from '../../store/slices/authSlice';
 
 export default function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const token = useSelector((s) => s.auth.token);
+  const { isAuthenticated } = useSelector((s) => s.auth);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -14,10 +14,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav style={styles.nav}>
+    <nav role="navigation" style={styles.nav}>
       <Link to="/" style={styles.brand}>CodeCrest</Link>
       <div style={styles.links}>
-        {token ? (
+        {isAuthenticated ? (
           <>
             <Link to="/dashboard" style={styles.link}>Dashboard</Link>
             <Link to="/challenges" style={styles.link}>Challenges</Link>

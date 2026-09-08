@@ -1,36 +1,28 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchContests, joinContestAction } from '../store/slices/contestslice';
-import EmptyState from '../Challenges/common/EmptyState';
-import { toast } from 'react-toastify';
+import React from 'react';
+import { useSelector } from 'react-redux';
 
 export default function ContestList({ onAdd }) {
-  const dispatch = useDispatch();
-  const { list, loading } = useSelector((s) => s.contests);
-
-  useEffect(() => { dispatch(fetchContests()); }, [dispatch]);
-
-  const handleJoin = async (id) => {
-    const res = await dispatch(joinContestAction(id));
-    if (res.meta.requestStatus === 'fulfilled') toast.success('Joined contest!');
-    else toast.error(res.payload);
-  };
+  const { items = [], loading } = useSelector((s) => s.contests);
 
   return (
     <div style={styles.container}>
       <div style={styles.header}>
-        <h2 style={styles.title}>Contests</h2>
-        <button style={styles.addBtn} onClick={onAdd}>+ Create Contest</button>
+        <h2 style={styles.title}>Programming Contests</h2>
+        {onAdd && <button style={styles.addBtn} onClick={onAdd}>+ Create Contest</button>}
       </div>
-      {loading ? <p style={styles.msg}>Loading...</p> : list.length === 0 ? <EmptyState message="No contests available." /> : (
+      {loading ? (
+        <p style={styles.msg}>Loading...</p>
+      ) : items.length === 0 ? (
+        <p style={styles.msg}>No contests available.</p>
+      ) : (
         <div style={styles.grid}>
-          {list.map((c) => (
+          {items.map((c) => (
             <div key={c.id} style={styles.card}>
               <h3 style={styles.name}>{c.name}</h3>
               <p style={styles.info}>Status: <span style={{ color: c.status === 'ACTIVE' ? '#a6e3a1' : '#f9e2af' }}>{c.status}</span></p>
-              <p style={styles.info}>Start: {new Date(c.startTime).toLocaleString()}</p>
-              <p style={styles.info}>End: {new Date(c.endTime).toLocaleString()}</p>
-              <button style={styles.joinBtn} onClick={() => handleJoin(c.id)}>Join</button>
+              <p style={styles.info}>Start: {c.startTime ? new Date(c.startTime).toLocaleString() : '-'}</p>
+              <p style={styles.info}>End: {c.endTime ? new Date(c.endTime).toLocaleString() : '-'}</p>
+              <button style={styles.joinBtn}>Join</button>
             </div>
           ))}
         </div>
