@@ -9,7 +9,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { loading, error } = useSelector((s) => s.auth);
   const [isRegister, setIsRegister] = useState(false);
-  const [form, setForm] = useState({ username: '', password: '', email: '' });
+  const [form, setForm] = useState({ username: '', password: '', bio: '' });
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -34,7 +34,7 @@ export default function Login() {
         <h2 style={styles.title}>{isRegister ? 'Register' : 'Login'}</h2>
         <form onSubmit={handleSubmit} style={styles.form}>
           <input name="username" placeholder="Username" value={form.username} onChange={handleChange} style={styles.input} required />
-          {isRegister && <input name="email" placeholder="Email" value={form.email} onChange={handleChange} style={styles.input} required />}
+          {isRegister && <input name="bio" placeholder="Bio (optional)" value={form.bio} onChange={handleChange} style={styles.input} />}
           <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} style={styles.input} required />
           {error && <p style={styles.error}>{error}</p>}
           <button type="submit" style={styles.btn} disabled={loading}>{loading ? 'Please wait...' : isRegister ? 'Register' : 'Login'}</button>
