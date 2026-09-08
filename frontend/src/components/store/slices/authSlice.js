@@ -7,7 +7,7 @@ export const loginUser = createAsyncThunk('auth/login', async (data, { rejectWit
     localStorage.setItem('token', res.data.token);
     return res.data;
   } catch (e) {
-    const message = e.response?.data?.message || e.message || 'Login failed';
+    const message = e.code === 'ERR_NETWORK' ? 'Cannot connect to server. Please ensure the backend is running.' : (e.response?.data?.message || e.message || 'Login failed');
     return rejectWithValue(message);
   }
 });
@@ -17,7 +17,7 @@ export const registerUser = createAsyncThunk('auth/register', async (data, { rej
     const res = await registerApi(data);
     return res.data;
   } catch (e) {
-    const message = e.response?.data?.message || e.message || 'Registration failed';
+    const message = e.code === 'ERR_NETWORK' ? 'Cannot connect to server. Please ensure the backend is running.' : (e.response?.data?.message || e.message || 'Registration failed');
     return rejectWithValue(message);
   }
 });
