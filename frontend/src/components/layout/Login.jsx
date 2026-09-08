@@ -20,11 +20,11 @@ export default function Login() {
       if (res.meta.requestStatus === 'fulfilled') {
         toast.success('Registered! Please login.');
         setIsRegister(false);
-      } else toast.error(res.payload);
+      } else toast.error(res.payload || 'Registration failed. Is the server running?');
     } else {
       const res = await dispatch(loginUser({ username: form.username, password: form.password }));
       if (res.meta.requestStatus === 'fulfilled') navigate('/dashboard');
-      else toast.error(res.payload);
+      else toast.error(res.payload || 'Login failed. Is the server running?');
     }
   };
 
