@@ -21,7 +21,7 @@ export default function ContestList({ contests, loading }) {
   const isAdmin = role === 'PLATFORM_ADMIN';
   const isContestant = role === 'CONTESTANT';
 
-  const items = contests?.items ?? contests ?? [];
+  const items = Array.isArray(contests) ? contests : (contests?.items ?? contests?.list ?? []);
 
   const handleEnroll = async (id) => {
     const res = await dispatch(enrollInContest(id));
