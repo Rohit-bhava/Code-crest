@@ -20,7 +20,9 @@ export default function ChallengeList({ onPageChange }) {
   const isAdmin = role === 'PLATFORM_ADMIN';
   const isSetter = role === 'PROBLEM_SETTER' || isAdmin;
 
-  const items = challengeState?.items ?? challengeState?.list ?? [];
+  const items = Array.isArray(challengeState?.items) ? challengeState.items
+    : Array.isArray(challengeState?.list) ? challengeState.list
+    : (challengeState?.items ?? challengeState?.content ?? challengeState?.list ?? []);
   const loading = challengeState?.loading ?? false;
   const totalPages = challengeState?.totalPages ?? 0;
   const currentPage = challengeState?.currentPage ?? 0;
