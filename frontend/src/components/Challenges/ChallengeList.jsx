@@ -32,55 +32,57 @@ export default function ChallengeList({ challenges, loading, totalPages, current
   if (!items.length) return <EmptyState icon="💻" title="No challenges found" message="Check back later or create one." />;
 
   return (
-    <div className="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Title</th>
-            <th>Difficulty</th>
-            <th>Points</th>
-            <th>Time Limit</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items.map((c, i) => (
-            <tr key={c.id}>
-              <td style={{ color: '#94a3b8' }}>{i + 1}</td>
-              <td>
-                <button
-                  onClick={() => navigate(`/challenges/${c.id}`)}
-                  style={{ background: 'none', border: 'none', color: '#6c47ff', fontWeight: 600, cursor: 'pointer', padding: 0, fontSize: '0.93rem' }}
-                >
-                  {c.title}
-                </button>
-              </td>
-              <td><span className={diffClass(c.difficulty)}>{c.difficulty}</span></td>
-              <td>{c.basePoints}</td>
-              <td>{c.timeLimitMs ? `${c.timeLimitMs}ms` : '—'}</td>
-              <td>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/challenges/${c.id}`)}>View</button>
-                  {isSetter && (
-                    <button className="btn btn-primary btn-sm" onClick={() => navigate(`/challenges/edit/${c.id}`)}>Edit</button>
-                  )}
-                  {isAdmin && (
-                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
-                  )}
-                </div>
-              </td>
+    <>
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Difficulty</th>
+              <th>Points</th>
+              <th>Time Limit</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    {totalPages > 1 && (
-      <div className="pagination">
-        <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 0}>&lt;</button>
-        <span>{currentPage + 1} / {totalPages}</span>
-        <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&gt;</button>
+          </thead>
+          <tbody>
+            {items.map((c, i) => (
+              <tr key={c.id}>
+                <td style={{ color: '#94a3b8' }}>{i + 1}</td>
+                <td>
+                  <button
+                    onClick={() => navigate(`/challenges/${c.id}`)}
+                    style={{ background: 'none', border: 'none', color: '#6c47ff', fontWeight: 600, cursor: 'pointer', padding: 0, fontSize: '0.93rem' }}
+                  >
+                    {c.title}
+                  </button>
+                </td>
+                <td><span className={diffClass(c.difficulty)}>{c.difficulty}</span></td>
+                <td>{c.basePoints}</td>
+                <td>{c.timeLimitMs ? `${c.timeLimitMs}ms` : '—'}</td>
+                <td>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/challenges/${c.id}`)}>View</button>
+                    {isSetter && (
+                      <button className="btn btn-primary btn-sm" onClick={() => navigate(`/challenges/edit/${c.id}`)}>Edit</button>
+                    )}
+                    {isAdmin && (
+                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    )}
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 0}>&lt;</button>
+          <span>{currentPage + 1} / {totalPages}</span>
+          <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&gt;</button>
+        </div>
+      )}
+    </>
   );
 }

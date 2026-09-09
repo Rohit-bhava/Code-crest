@@ -37,11 +37,11 @@ export default function ContestList({ contests, loading }) {
   };
 
   if (loading) return <div className="page-loader"><div className="spinner" /></div>;
-  if (!items.length) return <EmptyState icon="🏁" title="No contests available" message="Check back later." />;
 
   return (
     <div>
       <h2>Programming Contests</h2>
+      {!items.length && <EmptyState icon="🏁" title="No contests available" message="Check back later." />}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
         {items.map((c) => (
           <div key={c.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
