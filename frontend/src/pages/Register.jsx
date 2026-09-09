@@ -16,7 +16,7 @@ export default function Register() {
   const navigate = useNavigate();
   const { loading, error, isAuthenticated } = useSelector((s) => s.auth);
   const [form, setForm] = useState({ username: '', password: '', bio: '' });
-  const [showRules, setShowRules] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) navigate('/dashboard');
@@ -29,7 +29,8 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!passwordValid) { setShowRules(true); return; }
+    setSubmitted(true);
+    if (!passwordValid) return;
     const res = await dispatch(registerUser(form));
     if (res.meta.requestStatus === 'fulfilled') {
       toast.success('Registration successful! Please sign in.');
@@ -51,8 +52,8 @@ export default function Register() {
           </div>
           <div className="form-group">
             <label className="form-label">Password *</label>
-            <input name="password" type="password" className="form-control" value={form.password} onChange={handleChange} placeholder="Choose a password" required onFocus={() => setShowRules(true)} />
-            {showRules && (
+            <input name="password" type="password" className="form-control" value={form.password} onChange={handleChange} placeholder="Choose a password" required />
+            {submitted && !passwordValid && (
               <ul style={styles.ruleList}>
                 {rules.map((r) => (
                   <li key={r.label} style={{ color: r.test(form.password) ? '#10b981' : '#ef4444', fontSize: '0.78rem', marginTop: 3 }}>

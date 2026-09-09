@@ -15,7 +15,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { loading, error, isAuthenticated } = useSelector((s) => s.auth);
   const [form, setForm] = useState({ username: '', password: '' });
-  const [showRules, setShowRules] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) navigate('/dashboard');
@@ -28,7 +28,8 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!passwordValid) { setShowRules(true); return; }
+    setSubmitted(true);
+    if (!passwordValid) return;
     const res = await dispatch(loginUser(form));
     if (res.meta.requestStatus === 'fulfilled') navigate('/dashboard');
   };
@@ -47,8 +48,8 @@ export default function Login() {
           </div>
           <div className="form-group">
             <label className="form-label">Password</label>
-            <input name="password" type="password" className="form-control" value={form.password} onChange={handleChange} placeholder="Enter password" required onFocus={() => setShowRules(true)} />
-            {showRules && (
+            <input name="password" type="password" className="form-control" value={form.password} onChange={handleChange} placeholder="Enter password" required />
+            {submitted && !passwordValid && (
               <ul style={styles.ruleList}>
                 {rules.map((r) => (
                   <li key={r.label} style={{ color: r.test(form.password) ? '#10b981' : '#ef4444', fontSize: '0.78rem', marginTop: 3 }}>
