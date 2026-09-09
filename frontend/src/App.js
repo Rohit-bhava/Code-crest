@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -14,6 +14,9 @@ import ChallengeList from './components/Challenges/chanllengeList';
 import ChallengeForm from './components/Challenges/challengesForm';
 import ContestList from './components/contests/ContestList';
 import ContestForm from './components/contests/ContestForm';
+import { fetchChallenges } from './components/store/slices/challengeSlice';
+import { fetchContests } from './components/store/slices/contestslice';
+import { fetchMySubmissions } from './components/store/slices/submissionSlice';
 
 function PrivateRoute({ children }) {
   const token = useSelector((s) => s.auth.token);
@@ -21,6 +24,12 @@ function PrivateRoute({ children }) {
 }
 
 function Dashboard() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchChallenges());
+    dispatch(fetchContests());
+    dispatch(fetchMySubmissions());
+  }, [dispatch]);
   return (
     <div style={{ padding: '24px', background: '#13131a', minHeight: '100vh' }}>
       <StatsCards />
