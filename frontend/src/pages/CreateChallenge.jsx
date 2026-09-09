@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addChallenge } from '../store/slices/challengeSlice';
-import ChallengeForm from '../components/challenges/ChallengeForm';
+import ChallengeForm from '../components/Challenges/ChallengeForm';
 import { toast } from 'react-toastify';
 
 export default function CreateChallenge() {

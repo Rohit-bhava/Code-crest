@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchChallengeById, editChallenge, clearSelected } from '../store/slices/challengeSlice';
-import ChallengeForm from '../components/challenges/ChallengeForm';
+import ChallengeForm from '../components/Challenges/ChallengeForm';
 import { toast } from 'react-toastify';
 
 export default function EditChallenge() {

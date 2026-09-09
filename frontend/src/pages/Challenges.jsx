@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchChallenges } from '../store/slices/challengeSlice';
-import ChallengeList from '../components/challenges/ChallengeList';
+import ChallengeList from '../components/Challenges/ChallengeList';
 
 export default function Challenges() {
   const dispatch = useDispatch();
