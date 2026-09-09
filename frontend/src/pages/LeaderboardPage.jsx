@@ -7,7 +7,8 @@ import Leaderboard from '../components/Leaderboard';
 export default function LeaderboardPage() {
   const dispatch = useDispatch();
   const { leaderboard, loading, currentPage, totalPages } = useSelector((s) => s.ranking);
-  const { list: contests } = useSelector((s) => s.contests);
+  const contestState = useSelector((s) => s.contests);
+  const contests = Array.isArray(contestState.list) ? contestState.list : (contestState.list?.items ?? contestState.list?.content ?? []);
   const [contestId, setContestId] = useState('');
 
   useEffect(() => {
