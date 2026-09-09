@@ -1,9 +1,4 @@
 import api from './api';
 
-const authService = {
-  login: (data) => api.post('/auth/login', data),
-  logout: () => { localStorage.removeItem('token'); },
-  register: (data) => api.post('/auth/register', data),
-};
-
-export default authService;
+export const login = (data) => api.post('/auth/login', data);
+export const register = (data) => api.post('/auth/register', data);

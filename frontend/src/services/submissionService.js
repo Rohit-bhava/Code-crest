@@ -1,8 +1,6 @@
 import api from './api';
 
-const submissionService = {
-  submit: (data) => api.post('/submissions', data),
-  getMySubmissions: () => api.get('/submissions/my'),
-};
+export const getAllSubmissions = (page = 0, size = 20) =>
+  api.get('/submissions', { params: { page, size } });
 
-export default submissionService;
+export const getMySubmissions = () => api.get('/submissions/my');

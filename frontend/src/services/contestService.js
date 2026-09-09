@@ -1,11 +1,8 @@
 import api from './api';
 
-const contestService = {
-  getAll: () => api.get('/contests'),
-  getById: (id) => api.get(`/contests/${id}`),
-  create: (data) => api.post('/contests', data),
-  delete: (id) => api.delete(`/contests/${id}`),
-  join: (id) => api.post(`/contests/${id}/join`),
-};
-
-export default contestService;
+export const getContests = () => api.get('/contests');
+export const getContestById = (id) => api.get(`/contests/${id}`);
+export const createContest = (data) => api.post('/contests', data);
+export const updateContest = (id, data) => api.put(`/contests/${id}`, data);
+export const deleteContest = (id) => api.delete(`/contests/${id}`);
+export const enrollContest = (id) => api.post(`/contests/${id}/enroll`);

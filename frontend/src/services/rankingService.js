@@ -1,8 +1,7 @@
 import api from './api';
 
-const rankingService = {
-  getGlobal: () => api.get('/leaderboard'),
-  getContestRankings: (id) => api.get(`/leaderboard/contest/${id}`),
-};
+export const getGlobalLeaderboard = (page = 0, size = 20) =>
+  api.get('/leaderboard/global', { params: { page, size } });
 
-export default rankingService;
+export const getContestLeaderboard = (contestId, page = 0, size = 20) =>
+  api.get(`/leaderboard/contest/${contestId}`, { params: { page, size } });
