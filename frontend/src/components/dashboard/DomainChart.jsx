@@ -4,8 +4,9 @@ import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recha
 const COLORS = { EASY: '#10b981', MEDIUM: '#f59e0b', HARD: '#ef4444' };
 
 export default function DomainChart({ challenges }) {
+  const items = Array.isArray(challenges) ? challenges : (challenges?.items ?? challenges?.list ?? []);
   const data = ['EASY', 'MEDIUM', 'HARD']
-    .map((d) => ({ name: d, value: (challenges || []).filter((c) => c.difficulty === d).length }))
+    .map((d) => ({ name: d, value: items.filter((c) => c.difficulty === d).length }))
     .filter((d) => d.value > 0);
 
   return (
