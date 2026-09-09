@@ -4,11 +4,19 @@ import { useNavigate, Link } from 'react-router-dom';
 import { registerUser, clearError } from '../store/slices/authSlice';
 import { toast } from 'react-toastify';
 
+const rules = [
+  { label: 'At least 8 characters', test: (p) => p.length >= 8 },
+  { label: 'One uppercase letter (A-Z)', test: (p) => /[A-Z]/.test(p) },
+  { label: 'One number (0-9)', test: (p) => /[0-9]/.test(p) },
+  { label: 'One symbol (!@#$...)', test: (p) => /[^A-Za-z0-9]/.test(p) },
+];
+
 export default function Register() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error, isAuthenticated } = useSelector((s) => s.auth);
   const [form, setForm] = useState({ username: '', password: '', bio: '' });
+  const [showRules, setShowRules] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated) navigate('/dashboard');
@@ -17,8 +25,11 @@ export default function Register() {
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  const passwordValid = rules.every((r) => r.test(form.password));
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!passwordValid) { setShowRules(true); return; }
     const res = await dispatch(registerUser(form));
     if (res.meta.requestStatus === 'fulfilled') {
       toast.success('Registration successful! Please sign in.');
@@ -40,7 +51,16 @@ export default function Register() {
           </div>
           <div className="form-group">
             <label className="form-label">Password *</label>
-            <input name="password" type="password" className="form-control" value={form.password} onChange={handleChange} placeholder="Choose a password" required />
+            <input name="password" type="password" className="form-control" value={form.password} onChange={handleChange} placeholder="Choose a password" required onFocus={() => setShowRules(true)} />
+            {showRules && (
+              <ul style={styles.ruleList}>
+                {rules.map((r) => (
+                  <li key={r.label} style={{ color: r.test(form.password) ? '#10b981' : '#ef4444', fontSize: '0.78rem', marginTop: 3 }}>
+                    {r.test(form.password) ? '✓' : '✗'} {r.label}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div className="form-group">
             <label className="form-label">Bio</label>
@@ -66,4 +86,5 @@ const styles = {
   title: { margin: '0 0 6px', fontSize: '1.4rem', fontWeight: 700, color: '#1e293b', textAlign: 'center' },
   sub: { margin: '0 0 24px', color: '#64748b', fontSize: '0.9rem', textAlign: 'center' },
   footer: { textAlign: 'center', marginTop: 20, color: '#64748b', fontSize: '0.9rem' },
+  ruleList: { listStyle: 'none', padding: '6px 0 0', margin: 0 },
 };
