@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.entity.ProgrammingContest;
 import com.example.demo.repository.ProgrammingContestRepository;
 import com.example.demo.service.ContestService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +26,8 @@ public class ContestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProgrammingContest>> getAllContests() {
-        return ResponseEntity.ok(contestRepository.findAll());
+    public ResponseEntity<Page<ProgrammingContest>> getAllContests(Pageable pageable) {
+        return ResponseEntity.ok(contestRepository.findAll(pageable));
     }
 
     @GetMapping("/{id}")
