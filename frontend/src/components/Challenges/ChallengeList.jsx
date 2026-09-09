@@ -82,9 +82,9 @@ export default function ChallengeList({ onPageChange }) {
       </div>
       {totalPages > 1 && (
         <div className="pagination">
-          <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 0}>&lt;</button>
+          <button onClick={() => onPageChange && onPageChange(currentPage - 1)} disabled={currentPage === 0}>&lt;</button>
           <span>{currentPage + 1} / {totalPages}</span>
-          <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&gt;</button>
+          <button onClick={() => onPageChange && onPageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&gt;</button>
         </div>
       )}
     </>
