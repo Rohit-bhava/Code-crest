@@ -11,15 +11,19 @@ const diffClass = (d) => {
   return 'badge badge-hard';
 };
 
-export default function ChallengeList({ challenges, loading, totalPages, currentPage, onPageChange }) {
+export default function ChallengeList({ onPageChange }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((s) => s.auth);
+  const challengeState = useSelector((s) => s.challenges);
   const role = user?.role;
   const isAdmin = role === 'PLATFORM_ADMIN';
   const isSetter = role === 'PROBLEM_SETTER' || isAdmin;
 
-  const items = challenges?.items ?? challenges ?? [];
+  const items = challengeState?.items ?? challengeState?.list ?? [];
+  const loading = challengeState?.loading ?? false;
+  const totalPages = challengeState?.totalPages ?? 0;
+  const currentPage = challengeState?.currentPage ?? 0;
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this challenge?')) return;
@@ -29,7 +33,7 @@ export default function ChallengeList({ challenges, loading, totalPages, current
   };
 
   if (loading) return <div className="page-loader"><div className="spinner" /></div>;
-  if (!items.length) return <EmptyState icon="💻" title="No challenges found" message="Check back later or create one." />;
+  if (!items.length && totalPages <= 1) return <EmptyState icon="💻" title="No challenges found" message="Check back later or create one." />;
 
   return (
     <>
