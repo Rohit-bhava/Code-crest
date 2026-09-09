@@ -1,24 +1,33 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchMySubmissions } from '../store/slices/submissionSlice';
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-export default function RecentActivity() {
-  const dispatch = useDispatch();
-  const submissions = useSelector((s) => s.submissions.list.slice(0, 5));
+const verdictClass = (v) => {
+  if (!v) return '';
+  if (v === 'ACCEPTED') return 'badge badge-accepted';
+  if (v === 'WRONG_ANSWER') return 'badge badge-wrong';
+  if (v === 'TIME_LIMIT_EXCEEDED') return 'badge badge-tle';
+  return 'badge badge-runtime';
+};
 
-  useEffect(() => { dispatch(fetchMySubmissions()); }, [dispatch]);
+export default function RecentActivity({ submissions }) {
+  const recent = (submissions || []).slice(0, 5);
 
   return (
-    <div style={styles.container}>
-      <h3 style={styles.title}>Recent Submissions</h3>
-      {submissions.length === 0 ? (
-        <p style={styles.empty}>No submissions yet.</p>
+    <div className="card" style={{ flex: 1, minWidth: 280 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <h3 style={{ margin: 0, fontSize: '1rem', color: '#1e293b' }}>Recent Submissions</h3>
+        <Link to="/submissions" style={{ fontSize: '0.82rem', color: '#6c47ff' }}>View all →</Link>
+      </div>
+      {recent.length === 0 ? (
+        <p style={{ color: '#94a3b8', textAlign: 'center', padding: '30px 0' }}>No submissions yet.</p>
       ) : (
-        <ul style={styles.list}>
-          {submissions.map((s, i) => (
-            <li key={s.id || i} style={styles.item}>
-              <span style={styles.challenge}>{s.challengeTitle || `Challenge #${s.challengeId}`}</span>
-              <span style={{ ...styles.verdict, color: s.verdict === 'ACCEPTED' ? '#a6e3a1' : '#f38ba8' }}>{s.verdict}</span>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {recent.map((s, i) => (
+            <li key={s.id || i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: i < recent.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
+              <span style={{ fontSize: '0.9rem', color: '#334155' }}>
+                {s.challenge?.title || `Challenge #${s.challenge?.id || '?'}`}
+              </span>
+              <span className={verdictClass(s.verdict)}>{s.verdict || '—'}</span>
             </li>
           ))}
         </ul>
@@ -26,13 +35,3 @@ export default function RecentActivity() {
     </div>
   );
 }
-
-const styles = {
-  container: { background: '#1e1e2e', borderRadius: '10px', padding: '20px', minWidth: '300px' },
-  title: { color: '#cba6f7', marginBottom: '12px' },
-  empty: { color: '#a6adc8' },
-  list: { listStyle: 'none', padding: 0, margin: 0 },
-  item: { display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #313244' },
-  challenge: { color: '#cdd6f4' },
-  verdict: { fontWeight: 'bold', fontSize: '0.85rem' },
-};

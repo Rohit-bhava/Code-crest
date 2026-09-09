@@ -1,73 +1,77 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeChallenge } from '../../store/slices/challengeSlice';
+import EmptyState from '../common/EmptyState';
+import { toast } from 'react-toastify';
 
-const PAGE_SIZE = 5;
+const diffClass = (d) => {
+  if (d === 'EASY') return 'badge badge-easy';
+  if (d === 'MEDIUM') return 'badge badge-medium';
+  return 'badge badge-hard';
+};
 
-export default function ChallengeList({ onAdd, onEdit }) {
-  const { items = [], loading, totalPages = 0 } = useSelector((s) => s.challenges);
-  const [page, setPage] = useState(1);
+export default function ChallengeList({ challenges, loading }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((s) => s.auth);
+  const role = user?.role;
+  const isAdmin = role === 'PLATFORM_ADMIN';
+  const isSetter = role === 'PROBLEM_SETTER' || isAdmin;
 
-  const computedTotal = totalPages || Math.ceil(items.length / PAGE_SIZE);
-  const paginated = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this challenge?')) return;
+    const res = await dispatch(removeChallenge(id));
+    if (res.meta.requestStatus === 'fulfilled') toast.success('Challenge deleted');
+    else toast.error(res.payload || 'Failed to delete');
+  };
+
+  if (loading) return <div className="page-loader"><div className="spinner" /></div>;
+  if (!challenges?.length) return <EmptyState icon="💻" title="No challenges found" message="Check back later or create one." />;
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Challenges</h2>
-        {onAdd && <button style={styles.addBtn} onClick={onAdd}>+ Add Challenge</button>}
-      </div>
-      {loading ? (
-        <p style={styles.msg}>Loading...</p>
-      ) : items.length === 0 ? (
-        <p style={styles.msg}>No challenges found.</p>
-      ) : (
-        <table style={styles.table}>
-          <thead>
-            <tr>
-              {['Title', 'Difficulty', 'Points', 'Actions'].map((h) => (
-                <th key={h} style={styles.th}>{h}</th>
-              ))}
+    <div className="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Difficulty</th>
+            <th>Points</th>
+            <th>Time Limit</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {challenges.map((c, i) => (
+            <tr key={c.id}>
+              <td style={{ color: '#94a3b8' }}>{i + 1}</td>
+              <td>
+                <button
+                  onClick={() => navigate(`/challenges/${c.id}`)}
+                  style={{ background: 'none', border: 'none', color: '#6c47ff', fontWeight: 600, cursor: 'pointer', padding: 0, fontSize: '0.93rem' }}
+                >
+                  {c.title}
+                </button>
+              </td>
+              <td><span className={diffClass(c.difficulty)}>{c.difficulty}</span></td>
+              <td>{c.basePoints}</td>
+              <td>{c.timeLimitMs ? `${c.timeLimitMs}ms` : '—'}</td>
+              <td>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/challenges/${c.id}`)}>View</button>
+                  {isSetter && (
+                    <button className="btn btn-primary btn-sm" onClick={() => navigate(`/challenges/edit/${c.id}`)}>Edit</button>
+                  )}
+                  {isAdmin && (
+                    <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
+                  )}
+                </div>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {paginated.map((c) => (
-              <tr key={c.id} style={styles.row}>
-                <td style={styles.td}>{c.title}</td>
-                <td style={{ ...styles.td, color: c.difficulty === 'EASY' ? '#a6e3a1' : c.difficulty === 'MEDIUM' ? '#f9e2af' : '#f38ba8' }}>
-                  {c.difficulty}
-                </td>
-                <td style={styles.td}>{c.basePoints}</td>
-                <td style={styles.td}>
-                  <button style={styles.editBtn} onClick={() => onEdit && onEdit(c)}>Edit</button>
-                  <button style={styles.delBtn}>Delete</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-      <div style={styles.pagination}>
-        <button style={styles.pageBtn} onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>{'<'}</button>
-        <span style={styles.pageInfo}>{page} / {computedTotal || 1}</span>
-        <button style={styles.pageBtn} onClick={() => setPage((p) => p + 1)} disabled={page >= computedTotal}>{'>'}</button>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
-
-const styles = {
-  container: { padding: '24px', background: '#13131a', minHeight: '100vh', color: '#cdd6f4' },
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
-  title: { color: '#cba6f7' },
-  addBtn: { background: '#7c3aed', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
-  msg: { color: '#a6adc8' },
-  table: { width: '100%', borderCollapse: 'collapse' },
-  th: { background: '#313244', padding: '10px 16px', textAlign: 'left', color: '#cba6f7' },
-  td: { padding: '10px 16px', borderBottom: '1px solid #313244' },
-  row: { background: '#1e1e2e' },
-  editBtn: { background: '#89b4fa', color: '#1e1e2e', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer', marginRight: '6px' },
-  delBtn: { background: '#f38ba8', color: '#1e1e2e', border: 'none', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer' },
-  pagination: { display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'center', marginTop: '20px' },
-  pageBtn: { padding: '6px 14px', background: '#7c3aed', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' },
-  pageInfo: { color: '#cdd6f4' },
-};

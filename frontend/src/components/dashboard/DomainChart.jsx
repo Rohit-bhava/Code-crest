@@ -1,34 +1,29 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-const COLORS = ['#a6e3a1', '#f9e2af', '#f38ba8'];
+const COLORS = { EASY: '#10b981', MEDIUM: '#f59e0b', HARD: '#ef4444' };
 
-export default function DomainChart() {
-  const challenges = useSelector((s) => s.challenges.list);
-
-  const data = ['EASY', 'MEDIUM', 'HARD'].map((d) => ({
-    name: d,
-    value: challenges.filter((c) => c.difficulty === d).length,
-  })).filter((d) => d.value > 0);
-
-  if (!data.length) return <p style={{ color: '#a6adc8' }}>No challenge data yet.</p>;
+export default function DomainChart({ challenges }) {
+  const data = ['EASY', 'MEDIUM', 'HARD']
+    .map((d) => ({ name: d, value: (challenges || []).filter((c) => c.difficulty === d).length }))
+    .filter((d) => d.value > 0);
 
   return (
-    <div style={styles.container}>
-      <h3 style={styles.title}>Challenges by Difficulty</h3>
-      <PieChart width={300} height={250}>
-        <Pie data={data} cx={140} cy={110} outerRadius={90} dataKey="value" label>
-          {data.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-        </Pie>
-        <Tooltip />
-        <Legend />
-      </PieChart>
+    <div className="card" style={{ flex: 1, minWidth: 280 }}>
+      <h3 style={{ margin: '0 0 16px', fontSize: '1rem', color: '#1e293b' }}>Challenges by Difficulty</h3>
+      {data.length === 0 ? (
+        <p style={{ color: '#94a3b8', textAlign: 'center', padding: '40px 0' }}>No challenge data yet.</p>
+      ) : (
+        <ResponsiveContainer width="100%" height={220}>
+          <PieChart>
+            <Pie data={data} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
+              {data.map((entry) => <Cell key={entry.name} fill={COLORS[entry.name]} />)}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      )}
     </div>
   );
 }
-
-const styles = {
-  container: { background: '#1e1e2e', borderRadius: '10px', padding: '20px', display: 'inline-block' },
-  title: { color: '#cba6f7', marginBottom: '12px' },
-};
