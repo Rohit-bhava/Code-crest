@@ -1,8 +1,19 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContests, joinContestAction } from '../store/slices/contestslice';
+import { toast } from 'react-toastify';
 
 export default function ContestList({ onAdd }) {
-  const { items = [], loading } = useSelector((s) => s.contests);
+  const dispatch = useDispatch();
+  const { list: items = [], loading } = useSelector((s) => s.contests);
+
+  useEffect(() => { dispatch(fetchContests()); }, [dispatch]);
+
+  const handleJoin = async (id) => {
+    const res = await dispatch(joinContestAction(id));
+    if (res.meta.requestStatus === 'fulfilled') toast.success('Joined contest!');
+    else toast.error(res.payload);
+  };
 
   return (
     <div style={styles.container}>
@@ -22,7 +33,7 @@ export default function ContestList({ onAdd }) {
               <p style={styles.info}>Status: <span style={{ color: c.status === 'ACTIVE' ? '#a6e3a1' : '#f9e2af' }}>{c.status}</span></p>
               <p style={styles.info}>Start: {c.startTime ? new Date(c.startTime).toLocaleString() : '-'}</p>
               <p style={styles.info}>End: {c.endTime ? new Date(c.endTime).toLocaleString() : '-'}</p>
-              <button style={styles.joinBtn}>Join</button>
+              <button style={styles.joinBtn} onClick={() => handleJoin(c.id)}>Join</button>
             </div>
           ))}
         </div>

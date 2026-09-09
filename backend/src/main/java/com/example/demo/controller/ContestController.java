@@ -3,13 +3,12 @@ package com.example.demo.controller;
 import com.example.demo.entity.ProgrammingContest;
 import com.example.demo.repository.ProgrammingContestRepository;
 import com.example.demo.service.ContestService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/contests")
@@ -25,8 +24,8 @@ public class ContestController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProgrammingContest>> getAllContests(Pageable pageable) {
-        return ResponseEntity.ok(contestRepository.findAll(pageable));
+    public ResponseEntity<List<ProgrammingContest>> getAllContests() {
+        return ResponseEntity.ok(contestRepository.findAll());
     }
 
     @GetMapping("/{id}")
@@ -53,6 +52,12 @@ public class ContestController {
     public ResponseEntity<String> delete(@PathVariable Long id) {
         contestService.deleteContest(id);
         return ResponseEntity.ok("Contest deleted");
+    }
+
+    @PostMapping("/{id}/join")
+    public ResponseEntity<String> join(@PathVariable Long id, Principal principal) {
+        contestService.enrollParticipant(id, principal.getName());
+        return ResponseEntity.ok("Enrolled successfully");
     }
 
     @PostMapping("/{id}/enroll")

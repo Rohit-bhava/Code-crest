@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addContest } from '../store/slices/contestslice';
+import { toast } from 'react-toastify';
 
 const INITIAL = { name: '', description: '', startTime: '', endTime: '' };
 
-export default function ContestForm({ onClose, onSubmit }) {
+export default function ContestForm({ onClose }) {
+  const dispatch = useDispatch();
+  const { loading } = useSelector((s) => s.contests);
   const [form, setForm] = useState(INITIAL);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (onSubmit) onSubmit(form);
-    if (onClose) onClose();
+    const res = await dispatch(addContest(form));
+    if (res.meta.requestStatus === 'fulfilled') { toast.success('Contest created!'); onClose(); }
+    else toast.error(res.payload);
   };
 
   return (
@@ -25,7 +31,7 @@ export default function ContestForm({ onClose, onSubmit }) {
         <input name="endTime" type="datetime-local" value={form.endTime} onChange={handleChange} style={styles.input} required />
         <div style={styles.actions}>
           {onClose && <button type="button" onClick={onClose} style={styles.cancelBtn}>Cancel</button>}
-          <button type="submit" style={styles.submitBtn}>Create Contest</button>
+          <button type="submit" style={styles.submitBtn} disabled={loading}>{loading ? 'Saving...' : 'Create Contest'}</button>
         </div>
       </form>
     </div>

@@ -7,13 +7,12 @@ import com.example.demo.entity.CodingChallenge;
 import com.example.demo.repository.CodingChallengeRepository;
 import com.example.demo.service.ChallengeService;
 import com.example.demo.service.SubmissionService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/challenges")
@@ -32,8 +31,8 @@ public class ChallengeController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CodingChallenge>> getAll(Pageable pageable) {
-        return ResponseEntity.ok(challengeRepository.findAll(pageable));
+    public ResponseEntity<List<CodingChallenge>> getAll() {
+        return ResponseEntity.ok(challengeRepository.findAll());
     }
 
     @GetMapping("/{id}")
