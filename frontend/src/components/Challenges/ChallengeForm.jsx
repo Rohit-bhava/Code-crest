@@ -1,45 +1,86 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const INITIAL = { title: '', description: '', difficulty: 'EASY', domain: '', basePoints: '' };
+const INITIAL = { title: '', description: '', difficulty: 'EASY', basePoints: '', timeLimitMs: '' };
 
-export default function ChallengeForm({ onClose, onSubmit }) {
+export default function ChallengeForm({ initial, onSubmit, loading, submitLabel = 'Save Challenge' }) {
   const [form, setForm] = useState(INITIAL);
+  const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  useEffect(() => {
+    if (initial) {
+      setForm({
+        title: initial.title || '',
+        description: initial.description || '',
+        difficulty: initial.difficulty || 'EASY',
+        basePoints: initial.basePoints ?? '',
+        timeLimitMs: initial.timeLimitMs ?? '',
+      });
+    }
+  }, [initial]);
+
+  const validate = () => {
+    const e = {};
+    if (!form.title.trim()) e.title = 'Title is required';
+    if (!form.description.trim()) e.description = 'Description is required';
+    if (!form.difficulty) e.difficulty = 'Difficulty is required';
+    if (!form.basePoints || Number(form.basePoints) <= 0) e.basePoints = 'Base points must be positive';
+    if (!form.timeLimitMs || Number(form.timeLimitMs) <= 0) e.timeLimitMs = 'Time limit must be positive';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onSubmit) onSubmit({ ...form, basePoints: Number(form.basePoints) });
-    if (onClose) onClose();
+    if (!validate()) return;
+    onSubmit({
+      title: form.title.trim(),
+      description: form.description.trim(),
+      difficulty: form.difficulty,
+      basePoints: Number(form.basePoints),
+      timeLimitMs: Number(form.timeLimitMs),
+    });
   };
 
   return (
-    <div style={styles.container}>
-      <h3 style={styles.title}>New Challenge</h3>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input name="title" placeholder="Title" value={form.title} onChange={handleChange} style={styles.input} required />
-        <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} style={styles.textarea} required />
-        <select name="difficulty" value={form.difficulty} onChange={handleChange} style={styles.input}>
-          {['EASY', 'MEDIUM', 'HARD'].map((d) => <option key={d}>{d}</option>)}
-        </select>
-        <input name="domain" placeholder="Domain" value={form.domain} onChange={handleChange} style={styles.input} required />
-        <input name="basePoints" type="number" min="0" max="1000" placeholder="Points" value={form.basePoints} onChange={handleChange} style={styles.input} required />
-        <div style={styles.actions}>
-          {onClose && <button type="button" onClick={onClose} style={styles.cancelBtn}>Cancel</button>}
-          <button type="submit" style={styles.submitBtn}>Create Challenge</button>
+    <form onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label className="form-label">Title *</label>
+        <input name="title" className={`form-control ${errors.title ? 'error' : ''}`} value={form.title} onChange={handleChange} placeholder="Challenge title" />
+        {errors.title && <span className="form-error">{errors.title}</span>}
+      </div>
+      <div className="form-group">
+        <label className="form-label">Description *</label>
+        <textarea name="description" className={`form-control ${errors.description ? 'error' : ''}`} value={form.description} onChange={handleChange} placeholder="Problem statement..." rows={5} />
+        {errors.description && <span className="form-error">{errors.description}</span>}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
+        <div className="form-group">
+          <label className="form-label">Difficulty *</label>
+          <select name="difficulty" className="form-control" value={form.difficulty} onChange={handleChange}>
+            <option value="EASY">Easy</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HARD">Hard</option>
+          </select>
         </div>
-      </form>
-    </div>
+        <div className="form-group">
+          <label className="form-label">Base Points *</label>
+          <input name="basePoints" type="number" min="1" className={`form-control ${errors.basePoints ? 'error' : ''}`} value={form.basePoints} onChange={handleChange} placeholder="e.g. 100" />
+          {errors.basePoints && <span className="form-error">{errors.basePoints}</span>}
+        </div>
+        <div className="form-group">
+          <label className="form-label">Time Limit (ms) *</label>
+          <input name="timeLimitMs" type="number" min="1" className={`form-control ${errors.timeLimitMs ? 'error' : ''}`} value={form.timeLimitMs} onChange={handleChange} placeholder="e.g. 2000" />
+          {errors.timeLimitMs && <span className="form-error">{errors.timeLimitMs}</span>}
+        </div>
+      </div>
+      <button type="submit" className="btn btn-primary" disabled={loading}>
+        {loading ? 'Saving...' : submitLabel}
+      </button>
+    </form>
   );
 }
-
-const styles = {
-  container: { background: '#1e1e2e', padding: '32px', borderRadius: '12px', width: '420px', margin: '0 auto' },
-  title: { color: '#cba6f7', marginBottom: '20px' },
-  form: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  input: { padding: '10px', borderRadius: '6px', border: '1px solid #45475a', background: '#313244', color: '#cdd6f4' },
-  textarea: { padding: '10px', borderRadius: '6px', border: '1px solid #45475a', background: '#313244', color: '#cdd6f4', minHeight: '80px', resize: 'vertical' },
-  actions: { display: 'flex', gap: '12px', justifyContent: 'flex-end' },
-  cancelBtn: { padding: '8px 16px', background: '#45475a', color: '#cdd6f4', border: 'none', borderRadius: '6px', cursor: 'pointer' },
-  submitBtn: { padding: '8px 16px', background: '#7c3aed', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' },
-};

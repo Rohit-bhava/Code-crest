@@ -1,51 +1,94 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContest } from '../store/slices/contestslice';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from 'react';
 
-const INITIAL = { name: '', description: '', startTime: '', endTime: '' };
+const INITIAL = { title: '', startTime: '', endTime: '', capacity: '', status: 'UPCOMING' };
 
-export default function ContestForm({ onClose }) {
-  const dispatch = useDispatch();
-  const { loading } = useSelector((s) => s.contests);
+const toInputDT = (dt) => {
+  if (!dt) return '';
+  try { return new Date(dt).toISOString().slice(0, 16); } catch { return ''; }
+};
+
+export default function ContestForm({ initial, onSubmit, loading, submitLabel = 'Save Contest' }) {
   const [form, setForm] = useState(INITIAL);
+  const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  useEffect(() => {
+    if (initial) {
+      setForm({
+        title: initial.title || '',
+        startTime: toInputDT(initial.startTime),
+        endTime: toInputDT(initial.endTime),
+        capacity: initial.capacity ?? '',
+        status: initial.status || 'UPCOMING',
+      });
+    }
+  }, [initial]);
 
-  const handleSubmit = async (e) => {
+  const validate = () => {
+    const e = {};
+    if (!form.title.trim()) e.title = 'Title is required';
+    if (!form.startTime) e.startTime = 'Start time is required';
+    if (!form.endTime) e.endTime = 'End time is required';
+    if (form.startTime && form.endTime && new Date(form.startTime) >= new Date(form.endTime))
+      e.endTime = 'End time must be after start time';
+    if (form.capacity && Number(form.capacity) <= 0) e.capacity = 'Capacity must be positive';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const res = await dispatch(addContest(form));
-    if (res.meta.requestStatus === 'fulfilled') { toast.success('Contest created!'); onClose(); }
-    else toast.error(res.payload);
+    if (!validate()) return;
+    onSubmit({
+      title: form.title.trim(),
+      startTime: form.startTime,
+      endTime: form.endTime,
+      capacity: form.capacity ? Number(form.capacity) : null,
+      status: form.status,
+    });
   };
 
   return (
-    <div style={styles.container}>
-      <h3 style={styles.title}>Create New Contest</h3>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input name="name" placeholder="Contest Name" value={form.name} onChange={handleChange} style={styles.input} required />
-        <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} style={styles.textarea} />
-        <label style={styles.label}>Start Time</label>
-        <input name="startTime" type="datetime-local" value={form.startTime} onChange={handleChange} style={styles.input} required />
-        <label style={styles.label}>End Time</label>
-        <input name="endTime" type="datetime-local" value={form.endTime} onChange={handleChange} style={styles.input} required />
-        <div style={styles.actions}>
-          {onClose && <button type="button" onClick={onClose} style={styles.cancelBtn}>Cancel</button>}
-          <button type="submit" style={styles.submitBtn} disabled={loading}>{loading ? 'Saving...' : 'Create Contest'}</button>
+    <form onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label className="form-label">Title *</label>
+        <input name="title" className={`form-control ${errors.title ? 'error' : ''}`} value={form.title} onChange={handleChange} placeholder="Contest title" />
+        {errors.title && <span className="form-error">{errors.title}</span>}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="form-group">
+          <label className="form-label">Start Time *</label>
+          <input name="startTime" type="datetime-local" className={`form-control ${errors.startTime ? 'error' : ''}`} value={form.startTime} onChange={handleChange} />
+          {errors.startTime && <span className="form-error">{errors.startTime}</span>}
         </div>
-      </form>
-    </div>
+        <div className="form-group">
+          <label className="form-label">End Time *</label>
+          <input name="endTime" type="datetime-local" className={`form-control ${errors.endTime ? 'error' : ''}`} value={form.endTime} onChange={handleChange} />
+          {errors.endTime && <span className="form-error">{errors.endTime}</span>}
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="form-group">
+          <label className="form-label">Capacity</label>
+          <input name="capacity" type="number" min="1" className={`form-control ${errors.capacity ? 'error' : ''}`} value={form.capacity} onChange={handleChange} placeholder="Optional" />
+          {errors.capacity && <span className="form-error">{errors.capacity}</span>}
+        </div>
+        <div className="form-group">
+          <label className="form-label">Status</label>
+          <select name="status" className="form-control" value={form.status} onChange={handleChange}>
+            <option value="UPCOMING">Upcoming</option>
+            <option value="ACTIVE">Active</option>
+            <option value="COMPLETED">Completed</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" className="btn btn-primary" disabled={loading}>
+        {loading ? 'Saving...' : submitLabel}
+      </button>
+    </form>
   );
 }
-
-const styles = {
-  container: { background: '#1e1e2e', padding: '32px', borderRadius: '12px', width: '420px', margin: '0 auto' },
-  title: { color: '#cba6f7', marginBottom: '20px' },
-  form: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  input: { padding: '10px', borderRadius: '6px', border: '1px solid #45475a', background: '#313244', color: '#cdd6f4' },
-  textarea: { padding: '10px', borderRadius: '6px', border: '1px solid #45475a', background: '#313244', color: '#cdd6f4', minHeight: '70px', resize: 'vertical' },
-  label: { color: '#a6adc8', fontSize: '0.85rem' },
-  actions: { display: 'flex', gap: '12px', justifyContent: 'flex-end' },
-  cancelBtn: { padding: '8px 16px', background: '#45475a', color: '#cdd6f4', border: 'none', borderRadius: '6px', cursor: 'pointer' },
-  submitBtn: { padding: '8px 16px', background: '#7c3aed', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' },
-};

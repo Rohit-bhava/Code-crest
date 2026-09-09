@@ -1,56 +1,69 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchContests, joinContestAction } from '../store/slices/contestslice';
+import { enrollInContest, removeContest } from '../../store/slices/contestSlice';
+import EmptyState from '../common/EmptyState';
 import { toast } from 'react-toastify';
 
-export default function ContestList({ onAdd }) {
+const statusClass = (s) => {
+  if (s === 'ACTIVE') return 'badge badge-active';
+  if (s === 'COMPLETED') return 'badge badge-completed';
+  return 'badge badge-upcoming';
+};
+
+const fmt = (dt) => dt ? new Date(dt).toLocaleString() : '—';
+
+export default function ContestList({ contests, loading }) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { list: items = [], loading } = useSelector((s) => s.contests);
+  const { user } = useSelector((s) => s.auth);
+  const role = user?.role;
+  const isAdmin = role === 'PLATFORM_ADMIN';
+  const isContestant = role === 'CONTESTANT';
 
-  useEffect(() => { dispatch(fetchContests()); }, [dispatch]);
-
-  const handleJoin = async (id) => {
-    const res = await dispatch(joinContestAction(id));
-    if (res.meta.requestStatus === 'fulfilled') toast.success('Joined contest!');
-    else toast.error(res.payload);
+  const handleEnroll = async (id) => {
+    const res = await dispatch(enrollInContest(id));
+    if (res.meta.requestStatus === 'fulfilled') toast.success('Enrolled successfully!');
+    else toast.error(res.payload || 'Failed to enroll');
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this contest?')) return;
+    const res = await dispatch(removeContest(id));
+    if (res.meta.requestStatus === 'fulfilled') toast.success('Contest deleted');
+    else toast.error(res.payload || 'Failed to delete');
+  };
+
+  if (loading) return <div className="page-loader"><div className="spinner" /></div>;
+  if (!contests?.length) return <EmptyState icon="🏁" title="No contests available" message="Check back later." />;
+
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2 style={styles.title}>Programming Contests</h2>
-        {onAdd && <button style={styles.addBtn} onClick={onAdd}>+ Create Contest</button>}
-      </div>
-      {loading ? (
-        <p style={styles.msg}>Loading...</p>
-      ) : items.length === 0 ? (
-        <p style={styles.msg}>No contests available.</p>
-      ) : (
-        <div style={styles.grid}>
-          {items.map((c) => (
-            <div key={c.id} style={styles.card}>
-              <h3 style={styles.name}>{c.name}</h3>
-              <p style={styles.info}>Status: <span style={{ color: c.status === 'ACTIVE' ? '#a6e3a1' : '#f9e2af' }}>{c.status}</span></p>
-              <p style={styles.info}>Start: {c.startTime ? new Date(c.startTime).toLocaleString() : '-'}</p>
-              <p style={styles.info}>End: {c.endTime ? new Date(c.endTime).toLocaleString() : '-'}</p>
-              <button style={styles.joinBtn} onClick={() => handleJoin(c.id)}>Join</button>
-            </div>
-          ))}
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
+      {contests.map((c) => (
+        <div key={c.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <h3 style={{ margin: 0, fontSize: '1rem', color: '#1e293b' }}>{c.title}</h3>
+            <span className={statusClass(c.status)}>{c.status}</span>
+          </div>
+          <div style={{ fontSize: '0.85rem', color: '#64748b' }}>
+            <div>🕐 Start: {fmt(c.startTime)}</div>
+            <div>🕐 End: {fmt(c.endTime)}</div>
+            {c.capacity && <div>👥 Capacity: {c.capacity}</div>}
+          </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 'auto', flexWrap: 'wrap' }}>
+            <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/contests/${c.id}`)}>Details</button>
+            {isContestant && c.status !== 'COMPLETED' && (
+              <button className="btn btn-primary btn-sm" onClick={() => handleEnroll(c.id)}>Enroll</button>
+            )}
+            {isAdmin && (
+              <>
+                <button className="btn btn-primary btn-sm" onClick={() => navigate(`/contests/edit/${c.id}`)}>Edit</button>
+                <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
+              </>
+            )}
+          </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }
-
-const styles = {
-  container: { padding: '24px', background: '#13131a', minHeight: '100vh', color: '#cdd6f4' },
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' },
-  title: { color: '#cba6f7' },
-  addBtn: { background: '#7c3aed', color: '#fff', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer' },
-  msg: { color: '#a6adc8' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' },
-  card: { background: '#1e1e2e', borderRadius: '10px', padding: '20px' },
-  name: { color: '#cba6f7', marginBottom: '8px' },
-  info: { color: '#a6adc8', fontSize: '0.9rem', margin: '4px 0' },
-  joinBtn: { marginTop: '12px', background: '#7c3aed', color: '#fff', border: 'none', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer' },
-};

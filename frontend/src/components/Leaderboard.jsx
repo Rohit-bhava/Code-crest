@@ -1,46 +1,44 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import EmptyState from './common/EmptyState';
+import Pagination from './common/Pagination';
 
-export default function Leaderboard() {
-  const { items = [], loading } = useSelector((s) => s.rankings || { items: [], loading: false });
+export default function Leaderboard({ entries, loading, currentPage, totalPages, onPageChange }) {
+  const { user } = useSelector((s) => s.auth);
+
+  if (loading) return <div className="page-loader"><div className="spinner" /></div>;
+  if (!entries?.length) return <EmptyState icon="🏆" title="No rankings yet" message="Complete challenges to appear on the leaderboard." />;
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Leaderboard</h2>
-      {loading ? (
-        <p style={styles.msg}>Loading...</p>
-      ) : items.length === 0 ? (
-        <p style={styles.msg}>No rankings yet.</p>
-      ) : (
-        <table style={styles.table}>
+    <>
+      <div className="table-wrap">
+        <table>
           <thead>
             <tr>
-              {['Rank', 'Username', 'Score', 'Solved'].map((h) => (
-                <th key={h} style={styles.th}>{h}</th>
-              ))}
+              <th>Rank</th>
+              <th>Username</th>
+              <th>Total Score</th>
             </tr>
           </thead>
           <tbody>
-            {items.map((r, i) => (
-              <tr key={r.userId || i}>
-                <td style={styles.td}>{i + 1}</td>
-                <td style={styles.td}>{r.username}</td>
-                <td style={styles.td}>{r.totalScore}</td>
-                <td style={styles.td}>{r.problemsSolved}</td>
-              </tr>
-            ))}
+            {entries.map((r, i) => {
+              const isMe = user?.username && r.username === user.username;
+              return (
+                <tr key={i} style={isMe ? { background: '#ede9fe', fontWeight: 700 } : {}}>
+                  <td>
+                    {r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank || (currentPage * 20 + i + 1)}
+                  </td>
+                  <td style={isMe ? { color: '#6c47ff' } : {}}>
+                    {r.username} {isMe && <span style={{ fontSize: '0.75rem', color: '#6c47ff' }}>(you)</span>}
+                  </td>
+                  <td style={{ fontWeight: 600 }}>{r.score ?? 0}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
-      )}
-    </div>
+      </div>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+    </>
   );
 }
-
-const styles = {
-  container: { padding: '24px', background: '#13131a', minHeight: '100vh', color: '#cdd6f4' },
-  title: { marginBottom: '20px', color: '#cba6f7' },
-  msg: { color: '#a6adc8' },
-  table: { width: '100%', borderCollapse: 'collapse' },
-  th: { background: '#313244', padding: '10px 16px', textAlign: 'left', color: '#cba6f7' },
-  td: { padding: '10px 16px' },
-};
