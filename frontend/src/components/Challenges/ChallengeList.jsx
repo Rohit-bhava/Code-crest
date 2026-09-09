@@ -11,13 +11,15 @@ const diffClass = (d) => {
   return 'badge badge-hard';
 };
 
-export default function ChallengeList({ challenges, loading }) {
+export default function ChallengeList({ challenges, loading, totalPages, currentPage, onPageChange }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((s) => s.auth);
   const role = user?.role;
   const isAdmin = role === 'PLATFORM_ADMIN';
   const isSetter = role === 'PROBLEM_SETTER' || isAdmin;
+
+  const items = challenges?.items ?? challenges ?? [];
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this challenge?')) return;
@@ -27,7 +29,7 @@ export default function ChallengeList({ challenges, loading }) {
   };
 
   if (loading) return <div className="page-loader"><div className="spinner" /></div>;
-  if (!challenges?.length) return <EmptyState icon="💻" title="No challenges found" message="Check back later or create one." />;
+  if (!items.length) return <EmptyState icon="💻" title="No challenges found" message="Check back later or create one." />;
 
   return (
     <div className="table-wrap">
@@ -43,7 +45,7 @@ export default function ChallengeList({ challenges, loading }) {
           </tr>
         </thead>
         <tbody>
-          {challenges.map((c, i) => (
+          {items.map((c, i) => (
             <tr key={c.id}>
               <td style={{ color: '#94a3b8' }}>{i + 1}</td>
               <td>
@@ -73,5 +75,12 @@ export default function ChallengeList({ challenges, loading }) {
         </tbody>
       </table>
     </div>
+    {totalPages > 1 && (
+      <div className="pagination">
+        <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 0}>&lt;</button>
+        <span>{currentPage + 1} / {totalPages}</span>
+        <button onClick={() => onPageChange(currentPage + 1)} disabled={currentPage >= totalPages - 1}>&gt;</button>
+      </div>
+    )}
   );
 }

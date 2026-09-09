@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const INITIAL = { title: '', description: '', difficulty: 'EASY', basePoints: '', timeLimitMs: '' };
 
-export default function ChallengeForm({ initial, onSubmit, loading, submitLabel = 'Save Challenge' }) {
+export default function ChallengeForm({ initial, onSubmit, loading, submitLabel = 'Create Challenge' }) {
   const [form, setForm] = useState(INITIAL);
   const [errors, setErrors] = useState({});
 
@@ -55,7 +55,7 @@ export default function ChallengeForm({ initial, onSubmit, loading, submitLabel 
       </div>
       <div className="form-group">
         <label className="form-label">Description *</label>
-        <textarea name="description" className={`form-control ${errors.description ? 'error' : ''}`} value={form.description} onChange={handleChange} placeholder="Problem statement..." rows={5} />
+        <textarea name="description" required className={`form-control ${errors.description ? 'error' : ''}`} value={form.description} onChange={handleChange} placeholder="Problem statement..." rows={5} />
         {errors.description && <span className="form-error">{errors.description}</span>}
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16 }}>
