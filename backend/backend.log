@@ -1,0 +1,75 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.5:run (default-cli) > test-compile @ demo >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ demo ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ demo ---
+[INFO] Changes detected - recompiling the module! :input tree
+[INFO] Compiling 46 source files with javac [debug release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[87,12] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[90,13] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[91,9] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[93,9] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[95,13] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[96,9] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[98,9] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[102,13] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[103,13] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[103,29] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[103,48] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[105,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[106,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[107,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[108,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[109,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[110,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[111,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[112,13] class, interface, enum, or record expected
+[INFO] 19 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.324 s
+[INFO] Finished at: 2026-09-09T21:27:26+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project demo: Compilation failure: Compilation failure: 
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[87,12] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[90,13] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[91,9] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[93,9] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[95,13] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[96,9] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[98,9] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[102,13] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[103,13] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[103,29] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[103,48] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[105,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[106,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[107,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[108,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[109,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[110,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[111,17] class, interface, enum, or record expected
+[ERROR] /c:/Users/rajaram/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/config/DataSeeder.java:[112,13] class, interface, enum, or record expected
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+
+c:\Users\rajaram\AppData\Local\amypo\workspace\13954_9001_1_14273\backend>
