@@ -54,6 +54,7 @@ export default function ContestForm({ initial, onSubmit, loading, submitLabel = 
 
   return (
     <form onSubmit={handleSubmit}>
+      <h2>Create New Contest</h2>
       <div className="form-group">
         <label className="form-label">Title *</label>
         <input name="title" className={`form-control ${errors.title ? 'error' : ''}`} value={form.title} onChange={handleChange} placeholder="Contest title" />
