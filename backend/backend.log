@@ -386,3 +386,43 @@ Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_
 Hibernate: select cp1_0.id,cp1_0.account_status,cp1_0.bio,cp1_0.global_rank,cp1_0.total_points,cp1_0.user_id,cp1_0.username from contestant_profiles cp1_0 where cp1_0.username=?
 Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
 Hibernate: select cs1_0.id,cs1_0.challenge_id,cs1_0.contest_id,cs1_0.contestant_id,cs1_0.execution_time_ms,cs1_0.points_earned,cs1_0.source_code,cs1_0.submitted_at,cs1_0.verdict from challenge_submissions cs1_0 left join contestant_profiles c1_0 on c1_0.id=cs1_0.contestant_id where c1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cp1_0.id,cp1_0.account_status,cp1_0.bio,cp1_0.global_rank,cp1_0.total_points,cp1_0.user_id,cp1_0.username from contestant_profiles cp1_0 where cp1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cp1_0.id,cp1_0.account_status,cp1_0.bio,cp1_0.global_rank,cp1_0.total_points,cp1_0.user_id,cp1_0.username from contestant_profiles cp1_0 where cp1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cp1_0.id,cp1_0.account_status,cp1_0.bio,cp1_0.global_rank,cp1_0.total_points,cp1_0.user_id,cp1_0.username from contestant_profiles cp1_0 where cp1_0.username=?
+Hibernate: select cp1_0.id,cp1_0.account_status,cp1_0.bio,cp1_0.global_rank,cp1_0.total_points,cp1_0.user_id,cp1_0.username from contestant_profiles cp1_0 where cp1_0.username=?
+Hibernate: select cc1_0.id,cc1_0.base_points,cc1_0.description,cc1_0.difficulty,cc1_0.setter_id,cc1_0.time_limit_ms,cc1_0.title from coding_challenges cc1_0 limit ?,?
+Hibernate: select pc1_0.id,pc1_0.capacity,pc1_0.end_time,pc1_0.start_time,pc1_0.status,pc1_0.title from programming_contests pc1_0 limit ?,?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select cs1_0.id,cs1_0.challenge_id,cs1_0.contest_id,cs1_0.contestant_id,cs1_0.execution_time_ms,cs1_0.points_earned,cs1_0.source_code,cs1_0.submitted_at,cs1_0.verdict from challenge_submissions cs1_0 left join contestant_profiles c1_0 on c1_0.id=cs1_0.contestant_id where c1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cp1_0.id,cp1_0.account_status,cp1_0.bio,cp1_0.global_rank,cp1_0.total_points,cp1_0.user_id,cp1_0.username from contestant_profiles cp1_0 where cp1_0.username=?
+Hibernate: select cp1_0.id,cp1_0.account_status,cp1_0.bio,cp1_0.global_rank,cp1_0.total_points,cp1_0.user_id,cp1_0.username from contestant_profiles cp1_0 where cp1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select cc1_0.id,cc1_0.base_points,cc1_0.description,cc1_0.difficulty,cc1_0.setter_id,cc1_0.time_limit_ms,cc1_0.title from coding_challenges cc1_0 limit ?,?
+Hibernate: select pc1_0.id,pc1_0.capacity,pc1_0.end_time,pc1_0.start_time,pc1_0.status,pc1_0.title from programming_contests pc1_0 limit ?,?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select cs1_0.id,cs1_0.challenge_id,cs1_0.contest_id,cs1_0.contestant_id,cs1_0.execution_time_ms,cs1_0.points_earned,cs1_0.source_code,cs1_0.submitted_at,cs1_0.verdict from challenge_submissions cs1_0 left join contestant_profiles c1_0 on c1_0.id=cs1_0.contestant_id where c1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cc1_0.id,cc1_0.base_points,cc1_0.description,cc1_0.difficulty,cc1_0.setter_id,cc1_0.time_limit_ms,cc1_0.title from coding_challenges cc1_0 limit ?,?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cc1_0.id,cc1_0.base_points,cc1_0.description,cc1_0.difficulty,cc1_0.setter_id,cc1_0.time_limit_ms,cc1_0.title from coding_challenges cc1_0 limit ?,?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cc1_0.id,cc1_0.base_points,cc1_0.description,cc1_0.difficulty,s1_0.id,s1_0.password,s1_0.role,s1_0.username,cc1_0.time_limit_ms,cc1_0.title from coding_challenges cc1_0 left join system_users s1_0 on s1_0.id=cc1_0.setter_id where cc1_0.id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cc1_0.id,cc1_0.base_points,cc1_0.description,cc1_0.difficulty,s1_0.id,s1_0.password,s1_0.role,s1_0.username,cc1_0.time_limit_ms,cc1_0.title from coding_challenges cc1_0 left join system_users s1_0 on s1_0.id=cc1_0.setter_id where cc1_0.id=?
