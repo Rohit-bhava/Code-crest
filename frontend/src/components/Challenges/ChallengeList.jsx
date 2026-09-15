@@ -18,6 +18,7 @@ export default function ChallengeList({ onPageChange }) {
   const challengeState = useSelector((s) => s.challenges);
   const role = user?.role;
   const isAdmin = role === 'PLATFORM_ADMIN';
+  const canEdit = role === 'PROBLEM_SETTER' || role === 'PLATFORM_ADMIN';
 
   const items = Array.isArray(challengeState?.items) ? challengeState.items
     : Array.isArray(challengeState?.list) ? challengeState.list
@@ -68,7 +69,9 @@ export default function ChallengeList({ onPageChange }) {
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/challenges/${c.id}`)}>View</button>
-                    <button className="btn btn-primary btn-sm" onClick={() => navigate(`/challenges/edit/${c.id}`)}>Edit</button>
+                    {canEdit && (
+                      <button className="btn btn-primary btn-sm" onClick={() => navigate(`/challenges/edit/${c.id}`)}>Edit</button>
+                    )}
                     {isAdmin && (
                       <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
                     )}
