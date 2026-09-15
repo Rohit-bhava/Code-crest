@@ -18,7 +18,6 @@ export default function ChallengeList({ onPageChange }) {
   const challengeState = useSelector((s) => s.challenges);
   const role = user?.role;
   const isAdmin = role === 'PLATFORM_ADMIN';
-  const isSetter = role === 'PROBLEM_SETTER' || isAdmin;
 
   const items = Array.isArray(challengeState?.items) ? challengeState.items
     : Array.isArray(challengeState?.list) ? challengeState.list
