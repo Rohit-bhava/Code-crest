@@ -33,7 +33,17 @@ public class ProfileController {
         return ResponseEntity.ok(profile);
     }
 
+    @PutMapping("/me")
+    public ResponseEntity<String> updateMe(Principal principal, @RequestBody ContestantProfile profile) {
+        ContestantProfile existing = profileRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for current user"));
+        existing.setBio(profile.getBio());
+        profileRepository.save(existing);
+        return ResponseEntity.ok("Profile updated");
+    }
+
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ContestantProfile profile) {
         ContestantProfile existing = profileRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Profile not found with id: " + id));

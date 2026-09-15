@@ -32,6 +32,7 @@ public class SubmissionController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN','PROBLEM_SETTER')")
     public ResponseEntity<Page<ChallengeSubmission>> getAll(Pageable pageable) {
         return ResponseEntity.ok(submissionRepository.findAll(pageable));
     }

@@ -56,13 +56,8 @@ public class ContestController {
         return ResponseEntity.ok("Contest deleted");
     }
 
-    @PostMapping("/{id}/join")
-    public ResponseEntity<String> join(@PathVariable Long id, Principal principal) {
-        contestService.enrollParticipant(id, principal.getName());
-        return ResponseEntity.ok("Enrolled successfully");
-    }
-
     @PostMapping("/{id}/enroll")
+    @PreAuthorize("hasRole('CONTESTANT')")
     public ResponseEntity<String> enroll(@PathVariable Long id, Principal principal) {
         contestService.enrollParticipant(id, principal.getName());
         return ResponseEntity.ok("Enrolled successfully");

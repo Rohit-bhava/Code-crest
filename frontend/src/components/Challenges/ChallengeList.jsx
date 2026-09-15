@@ -11,21 +11,16 @@ const diffClass = (d) => {
   return 'badge badge-hard';
 };
 
-export default function ChallengeList({ onPageChange }) {
+export default function ChallengeList({ challenges, loading, onPageChange }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((s) => s.auth);
-  const challengeState = useSelector((s) => s.challenges);
+  const { totalPages = 0, currentPage = 0 } = useSelector((s) => s.challenges);
   const role = user?.role;
   const isAdmin = role === 'PLATFORM_ADMIN';
   const canEdit = role === 'PROBLEM_SETTER' || role === 'PLATFORM_ADMIN';
 
-  const items = Array.isArray(challengeState?.items) ? challengeState.items
-    : Array.isArray(challengeState?.list) ? challengeState.list
-    : (challengeState?.items ?? challengeState?.content ?? challengeState?.list ?? []);
-  const loading = challengeState?.loading ?? false;
-  const totalPages = challengeState?.totalPages ?? 0;
-  const currentPage = challengeState?.currentPage ?? 0;
+  const items = Array.isArray(challenges) ? challenges : [];
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this challenge?')) return;
