@@ -45,8 +45,16 @@ public class ChallengeService {
         challengeRepository.save(challenge);
     }
 
-    public void updateChallenge(Long id, ChallengeCreationDto dto) {
+    public void updateChallenge(Long id, ChallengeCreationDto dto, String username) {
         CodingChallenge challenge = getChallengeById(id);
+        SystemUser requester = systemUserRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
+        if (requester.getRole() == com.example.demo.entity.UserRole.PROBLEM_SETTER) {
+            if (challenge.getSetter() == null || !challenge.getSetter().getUsername().equals(username)) {
+                throw new com.example.demo.exception.BusinessValidationException(
+                        "You can only edit challenges you created");
+            }
+        }
         challenge.setTitle(dto.getTitle());
         challenge.setDescription(dto.getDescription());
         challenge.setDifficulty(dto.getDifficulty());

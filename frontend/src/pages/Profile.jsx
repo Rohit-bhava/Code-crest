@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getMyProfile, updateProfile } from '../services/profileService';
+import { getMyProfile, updateMyProfile } from '../services/profileService';
 import { toast } from 'react-toastify';
 
 const statusClass = (s) => {
@@ -35,7 +35,7 @@ export default function Profile() {
     e.preventDefault();
     setSaving(true);
     try {
-      await updateProfile(profile.id, { bio: form.bio });
+      await updateMyProfile({ bio: form.bio });
       setProfile({ ...profile, bio: form.bio });
       setEditing(false);
       toast.success('Profile updated!');

@@ -19,9 +19,11 @@ export default function Dashboard() {
   useEffect(() => {
     dispatch(fetchChallenges());
     dispatch(fetchContests());
-    dispatch(fetchMySubmissions());
-    getMyProfile().then((r) => setProfile(r.data)).catch(() => {});
-  }, [dispatch]);
+    if (user?.role === 'CONTESTANT') {
+      dispatch(fetchMySubmissions());
+      getMyProfile().then((r) => setProfile(r.data)).catch(() => {});
+    }
+  }, [dispatch, user?.role]);
 
   return (
     <div className="page">

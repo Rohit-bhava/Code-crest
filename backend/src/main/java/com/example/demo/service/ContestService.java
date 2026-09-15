@@ -63,8 +63,8 @@ public class ContestService {
     public void enrollParticipant(Long contestId, String username) {
         ProgrammingContest contest = getContestById(contestId);
 
-        if (contest.getStatus() != ContestStatus.UPCOMING) {
-            throw new BusinessValidationException("Cannot enroll in a contest that is not upcoming");
+        if (contest.getStatus() == ContestStatus.COMPLETED) {
+            throw new BusinessValidationException("Cannot enroll in a completed contest");
         }
 
         ContestantProfile contestant = contestantProfileRepository.findByUsername(username)
