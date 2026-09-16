@@ -222,3 +222,4 @@ Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden
 Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
 Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
 Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
