@@ -171,7 +171,7 @@ export default function ChallengeDetails() {
 
         {/* RIGHT — Editor + Results Panel */}
         <div style={{
-          flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#0f172a',
+          flex: 1, flexDirection: 'column', overflow: 'hidden', background: '#0f172a',
           display: activeTab === 'problem' ? 'none' : 'flex',
         }}
           className="editor-panel"
