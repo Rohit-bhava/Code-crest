@@ -46,6 +46,7 @@ export default function Submissions() {
                 <tr>
                   <th>#</th>
                   <th>Challenge</th>
+                  {!isContestant && <th>Submitted By</th>}
                   <th>Contest</th>
                   <th>Verdict</th>
                   <th>Points</th>
@@ -60,6 +61,11 @@ export default function Submissions() {
                     <td style={{ fontWeight: 500, color: '#1e293b' }}>
                       {s.challenge?.title || `Challenge #${s.challenge?.id || '?'}`}
                     </td>
+                    {!isContestant && (
+                      <td style={{ fontWeight: 500, color: '#6c47ff' }}>
+                        {s.submittedBy || s.contestant?.username || s.contestant?.user?.username || '—'}
+                      </td>
+                    )}
                     <td style={{ color: '#64748b' }}>
                       {s.contest?.title || '—'}
                     </td>
