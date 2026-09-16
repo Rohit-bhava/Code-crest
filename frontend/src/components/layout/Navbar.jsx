@@ -11,8 +11,7 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const role = user?.role;
-  const isAdmin = role === 'PLATFORM_ADMIN';
-  const isSetter = role === 'PROBLEM_SETTER' || isAdmin;
+  const isAdmin = role === 'ADMIN';
 
   const handleLogout = () => {
     dispatch(logout());
@@ -36,7 +35,7 @@ export default function Navbar() {
             <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
               <Link to="/dashboard" className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Dashboard</Link>
               <Link to="/challenges" className={`nav-link ${isActive('/challenges') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Challenges</Link>
-              {isSetter && (
+              {isAdmin && (
                 <Link to="/challenges/create" className={`nav-link ${isActive('/challenges/create') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>+ Challenge</Link>
               )}
               <Link to="/contests" className={`nav-link ${isActive('/contests') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Contests</Link>
