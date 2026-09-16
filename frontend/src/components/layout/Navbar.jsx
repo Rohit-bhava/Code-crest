@@ -44,7 +44,9 @@ export default function Navbar() {
               )}
               <Link to="/leaderboard" className={`nav-link ${isActive('/leaderboard') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Leaderboard</Link>
               <Link to="/submissions" className={`nav-link ${isActive('/submissions') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Submissions</Link>
-              <Link to="/profile" className={`nav-link ${isActive('/profile') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Profile</Link>
+              {!isAdmin && (
+                <Link to="/profile" className={`nav-link ${isActive('/profile') ? 'active' : ''}`} onClick={() => setMenuOpen(false)}>Profile</Link>
+              )}
             </div>
             <div className="navbar-right">
               <span className="navbar-user">👤 {user?.username || 'User'}</span>

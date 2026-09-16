@@ -94,6 +94,18 @@ public class ChallengeSubmission {
         this.contestant = contestant;
     }
 
+    public String getSubmittedBy() {
+        if (contestant != null) {
+            if (contestant.getUsername() != null && !contestant.getUsername().isBlank()) {
+                return contestant.getUsername();
+            }
+            if (contestant.getUser() != null && contestant.getUser().getUsername() != null) {
+                return contestant.getUser().getUsername();
+            }
+        }
+        return null;
+    }
+
     public CodingChallenge getChallenge() {
         return challenge;
     }
