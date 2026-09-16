@@ -38,19 +38,13 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // 1. PLATFORM_ADMIN
-        systemUserRepository.findByUsername("admin").orElseGet(() -> {
-            SystemUser u = new SystemUser("admin", passwordEncoder.encode("Admin@123"), UserRole.PLATFORM_ADMIN);
+        // 1. ADMIN
+        SystemUser setter = systemUserRepository.findByUsername("admin").orElseGet(() -> {
+            SystemUser u = new SystemUser("admin", passwordEncoder.encode("Admin@123"), UserRole.ADMIN);
             return systemUserRepository.save(u);
         });
 
-        // 2. PROBLEM_SETTER
-        SystemUser setter = systemUserRepository.findByUsername("setter").orElseGet(() -> {
-            SystemUser u = new SystemUser("setter", passwordEncoder.encode("Setter@123"), UserRole.PROBLEM_SETTER);
-            return systemUserRepository.save(u);
-        });
-
-        // 3. CONTESTANT users with profiles
+        // 2. CONTESTANT users with profiles
         SystemUser alice = systemUserRepository.findByUsername("alice").orElseGet(() -> {
             SystemUser u = new SystemUser("alice", passwordEncoder.encode("Alice@123"), UserRole.CONTESTANT);
             return systemUserRepository.save(u);

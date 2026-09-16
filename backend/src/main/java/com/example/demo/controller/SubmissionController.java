@@ -32,7 +32,7 @@ public class SubmissionController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('PLATFORM_ADMIN','PROBLEM_SETTER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<ChallengeSubmission>> getAll(Pageable pageable) {
         return ResponseEntity.ok(submissionRepository.findAll(pageable));
     }
@@ -46,7 +46,7 @@ public class SubmissionController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         submissionService.deleteSubmission(id);
         return ResponseEntity.ok("Submission deleted");

@@ -36,21 +36,21 @@ public class ContestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> create(@RequestBody ProgrammingContest contest) {
         contestService.createContest(contest);
         return ResponseEntity.ok("Contest created");
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ProgrammingContest contest) {
         contestService.updateContest(id, contest);
         return ResponseEntity.ok("Contest updated");
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         contestService.deleteContest(id);
         return ResponseEntity.ok("Contest deleted");

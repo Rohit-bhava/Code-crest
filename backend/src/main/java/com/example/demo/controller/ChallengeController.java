@@ -43,21 +43,21 @@ public class ChallengeController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('PROBLEM_SETTER','PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> create(@RequestBody ChallengeCreationDto dto, Principal principal) {
         challengeService.createChallenge(dto, principal.getName());
         return ResponseEntity.ok("Challenge created");
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('PROBLEM_SETTER','PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ChallengeCreationDto dto, Principal principal) {
         challengeService.updateChallenge(id, dto, principal.getName());
         return ResponseEntity.ok("Challenge updated");
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('PLATFORM_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         challengeService.deleteChallenge(id);
         return ResponseEntity.ok("Challenge deleted");
