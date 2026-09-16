@@ -15,14 +15,13 @@ export default function ChallengeList({ challenges, loading, onPageChange }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((s) => s.auth);
-  const { totalPages = 0, currentPage = 0, list } = useSelector((s) => s.challenges);
+  const { totalPages = 0, currentPage = 0, list, items } = useSelector((s) => s.challenges);
   const role = user?.role;
   const isAdmin = role === 'ADMIN';
   const canEdit = role === 'ADMIN';
 
-  const items = Array.isArray(challenges) && challenges.length > 0
-    ? challenges
-    : Array.isArray(list) ? list : [];
+  const storeData = Array.isArray(list) && list.length > 0 ? list : (Array.isArray(items) ? items : []);
+  const resolvedItems = Array.isArray(challenges) && challenges.length > 0 ? challenges : storeData;
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this challenge?')) return;
@@ -32,7 +31,7 @@ export default function ChallengeList({ challenges, loading, onPageChange }) {
   };
 
   if (loading) return <div className="page-loader"><div className="spinner" /></div>;
-  if (!items.length && totalPages <= 1) return <EmptyState icon="💻" title="No challenges found" message="Check back later or create one." />;
+  if (!resolvedItems.length && totalPages <= 1) return <EmptyState icon="💻" title="No challenges found" message="Check back later or create one." />;
 
   return (
     <>
@@ -49,7 +48,7 @@ export default function ChallengeList({ challenges, loading, onPageChange }) {
             </tr>
           </thead>
           <tbody>
-            {items.map((c, i) => (
+            {resolvedItems.map((c, i) => (
               <tr key={c.id}>
                 <td style={{ color: '#94a3b8' }}>{i + 1}</td>
                 <td>
@@ -66,9 +65,7 @@ export default function ChallengeList({ challenges, loading, onPageChange }) {
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/challenges/${c.id}`)}>View</button>
-                    {canEdit && (
-                      <button className="btn btn-primary btn-sm" onClick={() => navigate(`/challenges/edit/${c.id}`)}>Edit</button>
-                    )}
+                    <button className="btn btn-primary btn-sm" onClick={() => navigate(`/challenges/edit/${c.id}`)}>Edit</button>
                     {isAdmin && (
                       <button className="btn btn-danger btn-sm" onClick={() => handleDelete(c.id)}>Delete</button>
                     )}
