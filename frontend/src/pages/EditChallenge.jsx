@@ -36,7 +36,13 @@ export default function EditChallenge() {
       </div>
       <div className="card" style={{ maxWidth: 700 }}>
         {selected && (
-          <ChallengeForm initial={selected} onSubmit={handleSubmit} loading={loading} submitLabel="Update Challenge" />
+          <ChallengeForm
+            initial={selected}
+            onSubmit={handleSubmit}
+            onCancel={() => navigate('/challenges')}
+            loading={loading}
+            submitLabel="Update Challenge"
+          />
         )}
       </div>
     </div>

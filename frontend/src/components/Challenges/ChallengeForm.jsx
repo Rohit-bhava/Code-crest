@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 const INITIAL = { title: '', description: '', difficulty: 'EASY', basePoints: '', timeLimitMs: '' };
 
-export default function ChallengeForm({ initial, onSubmit, loading, submitLabel = 'Create Challenge' }) {
+export default function ChallengeForm({ initial, onSubmit, loading, submitLabel = 'Create Challenge', onCancel }) {
   const [form, setForm] = useState(INITIAL);
   const [errors, setErrors] = useState({});
 
@@ -78,9 +78,16 @@ export default function ChallengeForm({ initial, onSubmit, loading, submitLabel 
           {errors.timeLimitMs && <span className="form-error">{errors.timeLimitMs}</span>}
         </div>
       </div>
-      <button type="submit" className="btn btn-primary" disabled={loading}>
-        {loading ? 'Saving...' : submitLabel}
-      </button>
+      <div style={{ display: 'flex', gap: 12 }}>
+        <button type="submit" className="btn btn-primary" disabled={loading}>
+          {loading ? 'Saving...' : submitLabel}
+        </button>
+        {onCancel && (
+          <button type="button" className="btn btn-secondary" onClick={onCancel}>
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }
