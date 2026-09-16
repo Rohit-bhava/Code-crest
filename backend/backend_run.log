@@ -14,3 +14,42 @@
 [INFO] --- compiler:3.11.0:compile (default-compile) @ demo ---
 [INFO] Changes detected - recompiling the module! :source
 [INFO] Compiling 54 source files with javac [debug release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /c:/Users/Sanjaikumar/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/controller/ChallengeController.java:[6,32] cannot find symbol
+  symbol:   class ChallengeRunService
+  location: package com.example.demo.service
+[ERROR] /c:/Users/Sanjaikumar/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/controller/ChallengeController.java:[22,19] cannot find symbol
+  symbol:   class ChallengeRunService
+  location: class com.example.demo.controller.ChallengeController
+[ERROR] /c:/Users/Sanjaikumar/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/controller/ChallengeController.java:[26,33] cannot find symbol
+  symbol:   class ChallengeRunService
+  location: class com.example.demo.controller.ChallengeController
+[INFO] 3 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.295 s
+[INFO] Finished at: 2026-09-16T09:57:55+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project demo: Compilation failure: Compilation failure: 
+[ERROR] /c:/Users/Sanjaikumar/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/controller/ChallengeController.java:[6,32] cannot find symbol
+[ERROR]   symbol:   class ChallengeRunService
+[ERROR]   location: package com.example.demo.service
+[ERROR] /c:/Users/Sanjaikumar/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/controller/ChallengeController.java:[22,19] cannot find symbol
+[ERROR]   symbol:   class ChallengeRunService
+[ERROR]   location: class com.example.demo.controller.ChallengeController
+[ERROR] /c:/Users/Sanjaikumar/AppData/Local/amypo/workspace/13954_9001_1_14273/backend/src/main/java/com/example/demo/controller/ChallengeController.java:[26,33] cannot find symbol
+[ERROR]   symbol:   class ChallengeRunService
+[ERROR]   location: class com.example.demo.controller.ChallengeController
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+
+c:\Users\Sanjaikumar\AppData\Local\amypo\workspace\13954_9001_1_14273\backend>
