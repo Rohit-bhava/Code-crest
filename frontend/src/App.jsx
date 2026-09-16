@@ -41,12 +41,12 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/challenges" element={<PrivateRoute><Challenges /></PrivateRoute>} />
-        <Route path="/challenges/create" element={<RoleRoute roles={['PROBLEM_SETTER','PLATFORM_ADMIN']}><CreateChallenge /></RoleRoute>} />
-        <Route path="/challenges/edit/:id" element={<RoleRoute roles={['PROBLEM_SETTER','PLATFORM_ADMIN']}><EditChallenge /></RoleRoute>} />
+        <Route path="/challenges/create" element={<RoleRoute roles={['ADMIN']}><CreateChallenge /></RoleRoute>} />
+        <Route path="/challenges/edit/:id" element={<RoleRoute roles={['ADMIN']}><EditChallenge /></RoleRoute>} />
         <Route path="/challenges/:id" element={<PrivateRoute><ChallengeDetails /></PrivateRoute>} />
         <Route path="/contests" element={<PrivateRoute><Contests /></PrivateRoute>} />
-        <Route path="/contests/create" element={<RoleRoute roles={['PLATFORM_ADMIN']}><CreateContest /></RoleRoute>} />
-        <Route path="/contests/edit/:id" element={<RoleRoute roles={['PLATFORM_ADMIN']}><EditContest /></RoleRoute>} />
+        <Route path="/contests/create" element={<RoleRoute roles={['ADMIN']}><CreateContest /></RoleRoute>} />
+        <Route path="/contests/edit/:id" element={<RoleRoute roles={['ADMIN']}><EditContest /></RoleRoute>} />
         <Route path="/contests/:id" element={<PrivateRoute><ContestDetails /></PrivateRoute>} />
         <Route path="/leaderboard" element={<PrivateRoute><LeaderboardPage /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />

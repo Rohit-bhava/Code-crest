@@ -10,7 +10,7 @@ export default function Challenges() {
   const { list, loading } = useSelector((s) => s.challenges);
   const { user } = useSelector((s) => s.auth);
   const role = user?.role;
-  const canCreate = role === 'PROBLEM_SETTER' || role === 'PLATFORM_ADMIN';
+  const canCreate = role === 'ADMIN';
 
   useEffect(() => { dispatch(fetchChallenges()); }, [dispatch]);
 

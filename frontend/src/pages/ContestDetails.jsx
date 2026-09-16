@@ -19,7 +19,7 @@ export default function ContestDetails() {
   const { selected: contest, loading, error } = useSelector((s) => s.contests);
   const { user } = useSelector((s) => s.auth);
   const isContestant = user?.role === 'CONTESTANT';
-  const isAdmin = user?.role === 'PLATFORM_ADMIN';
+  const isAdmin = user?.role === 'ADMIN';
 
   useEffect(() => {
     dispatch(fetchContestById(id));

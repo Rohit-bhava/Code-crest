@@ -9,7 +9,7 @@ export default function Contests() {
   const navigate = useNavigate();
   const { list, loading } = useSelector((s) => s.contests);
   const { user } = useSelector((s) => s.auth);
-  const isAdmin = user?.role === 'PLATFORM_ADMIN';
+  const isAdmin = user?.role === 'ADMIN';
 
   useEffect(() => { dispatch(fetchContests()); }, [dispatch]);
 
