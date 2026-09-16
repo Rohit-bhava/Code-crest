@@ -12,10 +12,11 @@
 [INFO] Copying 0 resource from src\main\resources to target\classes
 [INFO] 
 [INFO] --- compiler:3.11.0:compile (default-compile) @ demo ---
-[INFO] Nothing to compile - all classes are up to date
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 55 source files with javac [debug release 17] to target\classes
 [INFO] 
 [INFO] --- resources:3.3.1:testResources (default-testResources) @ demo ---
-[INFO] skip non existing resourceDirectory c:\Users\ADMIN\AppData\Local\amypo\workspace\13954_9001_1_14273\backend\src\test\resources
+[INFO] skip non existing resourceDirectory c:\Users\Sanjaikumar\AppData\Local\amypo\workspace\13954_9001_1_14273\backend\src\test\resources
 [INFO] 
 [INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ demo ---
 [INFO] No sources to compile
@@ -25,80 +26,3 @@
 [INFO] 
 [INFO] --- spring-boot:3.2.5:run (default-cli) @ demo ---
 [INFO] Attaching agents: []
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::                (v3.2.5)
-
-2026-09-10T09:10:35.770+05:30  INFO 13808 --- [           main] com.example.demo.CodecrestApplication    : Starting CodecrestApplication using Java 17.0.12 with PID 13808 (C:\Users\ADMIN\AppData\Local\amypo\workspace\13954_9001_1_14273\backend\target\classes started by ADMIN in c:\Users\ADMIN\AppData\Local\amypo\workspace\13954_9001_1_14273\backend)
-2026-09-10T09:10:35.774+05:30  INFO 13808 --- [           main] com.example.demo.CodecrestApplication    : No active profile set, falling back to 1 default profile: "default"
-2026-09-10T09:10:37.848+05:30  INFO 13808 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-09-10T09:10:38.002+05:30  INFO 13808 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 130 ms. Found 6 JPA repository interfaces.
-2026-09-10T09:10:38.954+05:30  INFO 13808 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
-2026-09-10T09:10:38.977+05:30  INFO 13808 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-09-10T09:10:38.978+05:30  INFO 13808 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.20]
-2026-09-10T09:10:39.128+05:30  INFO 13808 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-09-10T09:10:39.133+05:30  INFO 13808 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3274 ms
-2026-09-10T09:10:39.447+05:30  INFO 13808 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-09-10T09:10:39.541+05:30  INFO 13808 --- [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
-2026-09-10T09:10:39.606+05:30  INFO 13808 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-09-10T09:10:40.011+05:30  INFO 13808 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-09-10T09:10:40.054+05:30  INFO 13808 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-09-10T09:10:40.472+05:30  INFO 13808 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1584c019
-2026-09-10T09:10:40.477+05:30  INFO 13808 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-09-10T09:10:40.622+05:30  WARN 13808 --- [           main] org.hibernate.dialect.Dialect            : HHH000511: The 5.6.0 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
-2026-09-10T09:10:43.373+05:30  INFO 13808 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-Hibernate: create table challenge_submissions (id bigint not null auto_increment, execution_time_ms integer, points_earned integer, source_code TEXT, submitted_at datetime(6), verdict enum ('ACCEPTED','WRONG_ANSWER','TIME_LIMIT_EXCEEDED','RUNTIME_ERROR'), challenge_id bigint, contest_id bigint, contestant_id bigint, primary key (id)) engine=InnoDB
-Hibernate: create table coding_challenges (id bigint not null auto_increment, base_points integer, description TEXT, difficulty enum ('EASY','MEDIUM','HARD'), time_limit_ms integer, title varchar(255) not null, setter_id bigint, primary key (id)) engine=InnoDB
-Hibernate: create table contest_rankings (id bigint not null auto_increment, current_score integer, local_rank integer, penalty_time integer, contest_id bigint, contestant_id bigint, primary key (id)) engine=InnoDB
-Hibernate: create table contestant_profiles (id bigint not null auto_increment, account_status enum ('ACTIVE','SUSPENDED','BANNED'), bio varchar(255), global_rank integer, total_points integer, username varchar(255), user_id bigint, primary key (id)) engine=InnoDB
-Hibernate: create table programming_contests (id bigint not null auto_increment, capacity integer, end_time datetime(6), start_time datetime(6), status enum ('UPCOMING','ACTIVE','COMPLETED'), title varchar(255), primary key (id)) engine=InnoDB
-Hibernate: create table system_users (id bigint not null auto_increment, password varchar(255) not null, role enum ('PLATFORM_ADMIN','PROBLEM_SETTER','CONTESTANT') not null, username varchar(255) not null, primary key (id)) engine=InnoDB
-Hibernate: alter table contest_rankings drop index UKguhg8kynfv3kw4oqg42eug7bn
-Hibernate: alter table contest_rankings add constraint UKguhg8kynfv3kw4oqg42eug7bn unique (contest_id, contestant_id)
-Hibernate: alter table contestant_profiles drop index UK_bqbur89qm2xnyiw5loeefvnh1
-Hibernate: alter table contestant_profiles add constraint UK_bqbur89qm2xnyiw5loeefvnh1 unique (user_id)
-Hibernate: alter table system_users drop index UK_tr0kj1o2dqfwm13a6fvwrg867
-Hibernate: alter table system_users add constraint UK_tr0kj1o2dqfwm13a6fvwrg867 unique (username)
-Hibernate: alter table challenge_submissions add constraint FKkrjjgpx61rt415ar5sch0xatk foreign key (challenge_id) references coding_challenges (id)
-Hibernate: alter table challenge_submissions add constraint FKnm9sghri9m0h9cxwsa7l5xbj1 foreign key (contest_id) references programming_contests (id)
-Hibernate: alter table challenge_submissions add constraint FKqmt0os5vdg9g8kingc5uafo14 foreign key (contestant_id) references contestant_profiles (id)
-Hibernate: alter table coding_challenges add constraint FKad2s2vrabw5u8408vlhihbp8x foreign key (setter_id) references system_users (id)
-Hibernate: alter table contest_rankings add constraint FK7t7ic20uvm5btwpiodvd8t21d foreign key (contest_id) references programming_contests (id)
-Hibernate: alter table contest_rankings add constraint FKnt1c0rke8vnjjjbt6en0cn4jo foreign key (contestant_id) references contestant_profiles (id)
-Hibernate: alter table contestant_profiles add constraint FKfnkoqs237x5vgb7p7kfht8vld foreign key (user_id) references system_users (id)
-2026-09-10T09:10:44.120+05:30  INFO 13808 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-09-10T09:10:45.483+05:30  WARN 13808 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2026-09-10T09:10:46.021+05:30  INFO 13808 --- [           main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@30bd6bc8, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7c4697fc, org.springframework.security.web.context.SecurityContextHolderFilter@7da0587a, org.springframework.security.web.header.HeaderWriterFilter@20524816, org.springframework.web.filter.CorsFilter@90b9695, org.springframework.security.web.authentication.logout.LogoutFilter@1b1d93e9, com.example.demo.security.JwtAuthFilter@3eb641a8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@47a90d2a, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@34907a49, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@e6fbf82, org.springframework.security.web.session.SessionManagementFilter@27244a88, org.springframework.security.web.access.ExceptionTranslationFilter@54a5eff, org.springframework.security.web.access.intercept.AuthorizationFilter@29dcad7e]
-2026-09-10T09:10:46.562+05:30  INFO 13808 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
-2026-09-10T09:10:46.581+05:30  INFO 13808 --- [           main] com.example.demo.CodecrestApplication    : Started CodecrestApplication in 11.558 seconds (process running for 12.588)
-Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
-Hibernate: insert into system_users (password,role,username) values (?,?,?)
-Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
-Hibernate: insert into system_users (password,role,username) values (?,?,?)
-Hibernate: select count(*) from coding_challenges cc1_0
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: insert into coding_challenges (base_points,description,difficulty,setter_id,time_limit_ms,title) values (?,?,?,?,?,?)
-Hibernate: select count(*) from programming_contests pc1_0
-Hibernate: insert into programming_contests (capacity,end_time,start_time,status,title) values (?,?,?,?,?)
-Hibernate: insert into programming_contests (capacity,end_time,start_time,status,title) values (?,?,?,?,?)
-Hibernate: insert into programming_contests (capacity,end_time,start_time,status,title) values (?,?,?,?,?)
-Hibernate: insert into programming_contests (capacity,end_time,start_time,status,title) values (?,?,?,?,?)
-Hibernate: insert into programming_contests (capacity,end_time,start_time,status,title) values (?,?,?,?,?)
