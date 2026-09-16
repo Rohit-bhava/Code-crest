@@ -15,6 +15,12 @@ public class ChallengeSubmission {
     @Column(columnDefinition = "TEXT")
     private String sourceCode;
 
+    private String language;
+
+    private Integer passedTestCases;
+
+    private Integer totalTestCases;
+
     @Enumerated(EnumType.STRING)
     private Verdict verdict;
 
@@ -47,13 +53,14 @@ public class ChallengeSubmission {
         this.id = id;
     }
 
-    public String getSourceCode() {
-        return sourceCode;
-    }
-
-    public void setSourceCode(String sourceCode) {
-        this.sourceCode = sourceCode;
-    }
+    public String getSourceCode() { return sourceCode; }
+    public void setSourceCode(String sourceCode) { this.sourceCode = sourceCode; }
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
+    public Integer getPassedTestCases() { return passedTestCases; }
+    public void setPassedTestCases(Integer passedTestCases) { this.passedTestCases = passedTestCases; }
+    public Integer getTotalTestCases() { return totalTestCases; }
+    public void setTotalTestCases(Integer totalTestCases) { this.totalTestCases = totalTestCases; }
 
     public Verdict getVerdict() {
         return verdict;
