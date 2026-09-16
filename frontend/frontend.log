@@ -1,0 +1,25 @@
+
+> appname@0.1.0 start
+> react-scripts start
+
+(node:5396) [DEP_WEBPACK_DEV_SERVER_ON_AFTER_SETUP_MIDDLEWARE] DeprecationWarning: 'onAfterSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:5396) [DEP_WEBPACK_DEV_SERVER_ON_BEFORE_SETUP_MIDDLEWARE] DeprecationWarning: 'onBeforeSetupMiddleware' option is deprecated. Please use the 'setupMiddlewares' option.
+Starting the development server...
+
+Compiled with warnings.
+
+[eslint] 
+src\pages\ChallengeDetails.jsx
+  Line 175:11:  Duplicate key 'display'  no-dupe-keys
+
+Search for the keywords to learn more about each warning.
+To ignore, add // eslint-disable-next-line to the line before.
+
+[1m[33mWARNING[39m[22m in [1m[eslint] 
+src\pages\ChallengeDetails.jsx
+  Line 175:11:  [1m[31mDuplicate[39m[22m[1m key 'display'  no-dupe-keys
+
+[39m[22m
+
+webpack compiled with [1m[33m1 warning[39m[22m
