@@ -63,14 +63,25 @@ export default function ChallengeDetails() {
   const navigate = useNavigate();
   const { selected: challenge, loading, error, runResult, submitResult, running, submitting } = useSelector((s) => s.challenges);
   const { user } = useSelector((s) => s.auth);
-  const isContestant = user?.role === 'CONTESTANT';
+  const canCode = user?.role === 'CONTESTANT' || user?.role === 'ADMIN';
 
   const [lang, setLang] = useState('python');
   const [code, setCode] = useState(STARTERS['python']);
-  const [activeTab, setActiveTab] = useState('problem'); // 'problem' | 'editor'
+  const [activeTab, setActiveTab] = useState('problem');
+  const [visibleTestCases, setVisibleTestCases] = useState([]);
 
   useEffect(() => {
     dispatch(fetchChallengeById(id));
+    // Fetch visible test cases to show before running
+    import('../../services/challengeService').then(m =>
+      m.getChallengeById(id).then(() =>
+        fetch(`http://localhost:8080/api/challenges/${id}/testcases`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        }).then(r => r.json()).then(data => {
+          if (Array.isArray(data)) setVisibleTestCases(data);
+        }).catch(() => {})
+      )
+    );
     return () => dispatch(clearResults());
   }, [id, dispatch]);
 

@@ -7,14 +7,12 @@ import ChallengeList from '../components/Challenges/ChallengeList';
 export default function Challenges() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { list, loading, error } = useSelector((s) => s.challenges);
-  const { user, isAuthenticated } = useSelector((s) => s.auth);
+  const { list, loading } = useSelector((s) => s.challenges);
+  const { user } = useSelector((s) => s.auth);
   const role = user?.role;
   const canCreate = role === 'ADMIN';
 
-  useEffect(() => {
-    if (isAuthenticated) dispatch(fetchChallenges());
-  }, [dispatch, isAuthenticated]);
+  useEffect(() => { dispatch(fetchChallenges()); }, [dispatch]);
 
   return (
     <div className="page">
