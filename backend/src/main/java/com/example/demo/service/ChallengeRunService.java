@@ -38,6 +38,11 @@ public class ChallengeRunService {
         this.executionService = executionService;
     }
 
+    // Get visible test cases for a challenge (for frontend display)
+    public java.util.List<com.example.demo.entity.ChallengeTestCase> getVisibleTestCases(Long challengeId) {
+        return testCaseRepository.findByChallengeIdAndHiddenFalseOrderByTestCaseOrderAsc(challengeId);
+    }
+
     // RUN — only visible test cases, no submission saved
     public RunCodeResponse run(Long challengeId, RunCodeRequest req) {
         if (req.getCode() == null || req.getCode().isBlank())
@@ -107,8 +112,8 @@ public class ChallengeRunService {
         CodingChallenge challenge = challengeRepository.findById(challengeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Challenge not found: " + challengeId));
 
-        ContestantProfile contestant = contestantProfileRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Profile not found for: " + username));
+        // ADMIN may not have a ContestantProfile — handle gracefully
+        ContestantProfile contestant = contestantProfileRepository.findByUsername(username).orElse(null);
 
         List<ChallengeTestCase> allCases =
                 testCaseRepository.findByChallengeIdOrderByTestCaseOrderAsc(challengeId);
@@ -137,17 +142,15 @@ public class ChallengeRunService {
             }
             String actual = executionService.normalizeOutput(exec.stdout);
             String expected = executionService.normalizeOutput(tc.getExpectedOutput());
-            if (actual.equals(expected)) {
-                passed++;
-            } else {
-                verdict = Verdict.WRONG_ANSWER;
-            }
+            if (actual.equals(expected)) passed++;
+            else verdict = Verdict.WRONG_ANSWER;
         }
 
         int executionTime = (int) (System.currentTimeMillis() - startTime);
         int pointsEarned = 0;
 
-        if (verdict == Verdict.ACCEPTED && passed == total && total > 0) {
+        // Only award points to contestants with a profile
+        if (contestant != null && verdict == Verdict.ACCEPTED && passed == total && total > 0) {
             double factor = Math.max(0.5, 1.0 - (executionTime / (double) Math.max(1, timeLimitMs)));
             pointsEarned = (int) Math.round(challenge.getBasePoints() * factor);
 
@@ -182,24 +185,27 @@ public class ChallengeRunService {
             }
         }
 
-        ChallengeSubmission submission = new ChallengeSubmission();
-        submission.setSourceCode(req.getCode());
-        submission.setLanguage(req.getLanguage());
-        submission.setVerdict(verdict);
-        submission.setExecutionTimeMs(executionTime);
-        submission.setPointsEarned(pointsEarned);
-        submission.setPassedTestCases(passed);
-        submission.setTotalTestCases(total);
-        submission.setContestant(contestant);
-        submission.setChallenge(challenge);
-        submission.setSubmittedAt(LocalDateTime.now());
-        if (req.getContestId() != null) {
-            contestRepository.findById(req.getContestId()).ifPresent(submission::setContest);
-        }
-        submission = submissionRepository.save(submission);
-
+        // Save submission only if contestant profile exists
         SubmitCodeResponse response = new SubmitCodeResponse();
-        response.setSubmissionId(submission.getId());
+        if (contestant != null) {
+            ChallengeSubmission submission = new ChallengeSubmission();
+            submission.setSourceCode(req.getCode());
+            submission.setLanguage(req.getLanguage());
+            submission.setVerdict(verdict);
+            submission.setExecutionTimeMs(executionTime);
+            submission.setPointsEarned(pointsEarned);
+            submission.setPassedTestCases(passed);
+            submission.setTotalTestCases(total);
+            submission.setContestant(contestant);
+            submission.setChallenge(challenge);
+            submission.setSubmittedAt(LocalDateTime.now());
+            if (req.getContestId() != null) {
+                contestRepository.findById(req.getContestId()).ifPresent(submission::setContest);
+            }
+            submission = submissionRepository.save(submission);
+            response.setSubmissionId(submission.getId());
+        }
+
         response.setStatus(verdict.name());
         response.setPassed(passed);
         response.setTotal(total);

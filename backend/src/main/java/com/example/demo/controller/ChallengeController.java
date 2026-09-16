@@ -39,6 +39,13 @@ public class ChallengeController {
         return ResponseEntity.ok(challengeService.getChallengeById(id));
     }
 
+    @GetMapping("/{id}/testcases")
+    public ResponseEntity<java.util.List<com.example.demo.entity.ChallengeTestCase>> getVisibleTestCases(@PathVariable Long id) {
+        return ResponseEntity.ok(
+            challengeRunService.getVisibleTestCases(id)
+        );
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> create(@RequestBody ChallengeCreationDto dto, Principal principal) {
@@ -62,7 +69,6 @@ public class ChallengeController {
 
     // RUN — visible test cases only, no submission saved
     @PostMapping("/{id}/run")
-    @PreAuthorize("hasRole('CONTESTANT')")
     public ResponseEntity<RunCodeResponse> run(@PathVariable Long id,
                                                 @RequestBody RunCodeRequest req) {
         return ResponseEntity.ok(challengeRunService.run(id, req));
@@ -70,7 +76,6 @@ public class ChallengeController {
 
     // SUBMIT — all test cases, saves submission, awards points
     @PostMapping("/{id}/submit")
-    @PreAuthorize("hasRole('CONTESTANT')")
     public ResponseEntity<SubmitCodeResponse> submit(@PathVariable Long id,
                                                       @RequestBody SubmitCodeRequest req,
                                                       Principal principal) {
@@ -79,7 +84,6 @@ public class ChallengeController {
 
     // Legacy submit endpoint for compatibility
     @PostMapping("/{id}/submit-legacy")
-    @PreAuthorize("hasRole('CONTESTANT')")
     public ResponseEntity<String> submit(@PathVariable Long id,
                                          @RequestBody SubmissionRequestDto req,
                                          Principal principal) {
