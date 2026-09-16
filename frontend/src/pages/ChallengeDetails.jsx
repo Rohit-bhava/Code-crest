@@ -17,7 +17,6 @@ import sys
 input = sys.stdin.readline
 
 def solve():
-    # Read input
     # Write your solution here
     pass
 
@@ -63,7 +62,7 @@ export default function ChallengeDetails() {
   const navigate = useNavigate();
   const { selected: challenge, loading, error, runResult, submitResult, running, submitting } = useSelector((s) => s.challenges);
   const { user } = useSelector((s) => s.auth);
-  const canCode = user?.role === 'CONTESTANT' || user?.role === 'ADMIN';
+  const canCode = !!user; // any logged-in user can run/submit
 
   const [lang, setLang] = useState('python');
   const [code, setCode] = useState(STARTERS['python']);
@@ -72,16 +71,13 @@ export default function ChallengeDetails() {
 
   useEffect(() => {
     dispatch(fetchChallengeById(id));
-    // Fetch visible test cases to show before running
-    import('../../services/challengeService').then(m =>
-      m.getChallengeById(id).then(() =>
-        fetch(`http://localhost:8080/api/challenges/${id}/testcases`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        }).then(r => r.json()).then(data => {
-          if (Array.isArray(data)) setVisibleTestCases(data);
-        }).catch(() => {})
-      )
-    );
+    // Fetch visible test cases to display in problem panel
+    const token = localStorage.getItem('token');
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    fetch(`http://localhost:8080/api/challenges/${id}/testcases`, { headers })
+      .then(r => r.ok ? r.json() : [])
+      .then(data => { if (Array.isArray(data)) setVisibleTestCases(data); })
+      .catch(() => {});
     return () => dispatch(clearResults());
   }, [id, dispatch]);
 
@@ -125,7 +121,6 @@ export default function ChallengeDetails() {
         <span className={diffBadge(challenge.difficulty)}>{challenge.difficulty}</span>
         <span style={{ color: '#a78bfa', fontSize: '0.85rem' }}>🏆 {challenge.basePoints} pts</span>
         {challenge.timeLimitMs && <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>⏱ {challenge.timeLimitMs}ms</span>}
-        {/* Tab switcher for mobile */}
         <div style={{ display: 'flex', gap: 4 }}>
           <button onClick={() => setActiveTab('problem')} style={{ padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', background: activeTab === 'problem' ? '#6c47ff' : '#312e81', color: '#fff', fontSize: '0.82rem' }}>Problem</button>
           <button onClick={() => setActiveTab('editor')} style={{ padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', background: activeTab === 'editor' ? '#6c47ff' : '#312e81', color: '#fff', fontSize: '0.82rem' }}>Editor</button>
@@ -178,6 +173,21 @@ export default function ChallengeDetails() {
               <pre style={codeBlock}>{challenge.sampleOutput}</pre>
             </Section>
           )}
+
+          {/* Visible Test Cases */}
+          {visibleTestCases.length > 0 && (
+            <Section title="Sample Test Cases">
+              {visibleTestCases.map((tc, i) => (
+                <div key={tc.id} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 14px', marginBottom: 10 }}>
+                  <div style={{ fontWeight: 600, fontSize: '0.82rem', color: '#6c47ff', marginBottom: 6 }}>Test Case {i + 1}</div>
+                  <div style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: 4 }}>Input:</div>
+                  <pre style={{ ...codeBlock, marginBottom: 8 }}>{tc.input}</pre>
+                  <div style={{ fontSize: '0.82rem', color: '#64748b', marginBottom: 4 }}>Expected Output:</div>
+                  <pre style={codeBlock}>{tc.expectedOutput}</pre>
+                </div>
+              ))}
+            </Section>
+          )}
         </div>
 
         {/* RIGHT — Editor + Results Panel */}
@@ -194,7 +204,7 @@ export default function ChallengeDetails() {
             </select>
             <button className="btn btn-secondary btn-sm" onClick={handleReset}>↺ Reset</button>
             <div style={{ flex: 1 }} />
-            {isContestant && (
+            {canCode ? (
               <>
                 <button className="btn btn-sm" onClick={handleRun} disabled={running || submitting}
                   style={{ background: '#0ea5e9', color: '#fff', minWidth: 80 }}>
@@ -205,9 +215,8 @@ export default function ChallengeDetails() {
                   {submitting ? '⏳ Submitting...' : '🚀 Submit'}
                 </button>
               </>
-            )}
-            {!isContestant && (
-              <span style={{ color: '#94a3b8', fontSize: '0.82rem' }}>Login as contestant to run/submit</span>
+            ) : (
+              <span style={{ color: '#94a3b8', fontSize: '0.82rem' }}>Login to run/submit</span>
             )}
           </div>
 
@@ -232,7 +241,7 @@ export default function ChallengeDetails() {
 
           {/* Results Panel */}
           {(runResult || submitResult) && (
-            <div style={{ maxHeight: 280, overflowY: 'auto', background: '#1e293b', borderTop: '1px solid #334155', padding: '12px 16px' }}>
+            <div style={{ maxHeight: 300, overflowY: 'auto', background: '#1e293b', borderTop: '1px solid #334155', padding: '12px 16px' }}>
 
               {/* Submit Result Banner */}
               {submitResult && (
@@ -296,12 +305,8 @@ function TestCaseCard({ tc }) {
           {passed ? '✓ Passed' : '✗ Failed'}
         </span>
       </div>
-      {tc.input !== '[hidden]' && (
-        <Row label="Input" value={tc.input} />
-      )}
-      {tc.expectedOutput !== '[hidden]' && (
-        <Row label="Expected" value={tc.expectedOutput} />
-      )}
+      {tc.input !== '[hidden]' && <Row label="Input" value={tc.input} />}
+      {tc.expectedOutput !== '[hidden]' && <Row label="Expected" value={tc.expectedOutput} />}
       <Row label="Got" value={tc.actualOutput || '(no output)'} highlight={!passed} />
       {tc.error && <Row label="Error" value={tc.error} highlight />}
     </div>
