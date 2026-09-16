@@ -15,12 +15,14 @@ export default function ChallengeList({ challenges, loading, onPageChange }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((s) => s.auth);
-  const { totalPages = 0, currentPage = 0 } = useSelector((s) => s.challenges);
+  const { totalPages = 0, currentPage = 0, list } = useSelector((s) => s.challenges);
   const role = user?.role;
-  const isAdmin = role === 'PLATFORM_ADMIN';
-  const canEdit = role === 'PROBLEM_SETTER' || role === 'PLATFORM_ADMIN';
+  const isAdmin = role === 'ADMIN';
+  const canEdit = role === 'ADMIN';
 
-  const items = Array.isArray(challenges) ? challenges : [];
+  const items = Array.isArray(challenges) && challenges.length > 0
+    ? challenges
+    : Array.isArray(list) ? list : [];
 
   const handleDelete = async (id) => {
     if (!window.confirm('Delete this challenge?')) return;

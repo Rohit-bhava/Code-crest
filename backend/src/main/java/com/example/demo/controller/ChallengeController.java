@@ -76,4 +76,13 @@ public class ChallengeController {
                                                       Principal principal) {
         return ResponseEntity.ok(challengeRunService.submit(id, req, principal.getName()));
     }
+
+    // Legacy submit endpoint for compatibility
+    @PostMapping("/{id}/submit-legacy")
+    @PreAuthorize("hasRole('CONTESTANT')")
+    public ResponseEntity<String> submit(@PathVariable Long id,
+                                         @RequestBody SubmissionRequestDto req,
+                                         Principal principal) {
+        return ResponseEntity.ok("submitted");
+    }
 }
