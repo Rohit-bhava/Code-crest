@@ -1,12 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ChallengeCreationDto;
-import com.example.demo.dto.SubmissionRequestDto;
-import com.example.demo.dto.SubmissionResponseDto;
+import com.example.demo.dto.*;
 import com.example.demo.entity.CodingChallenge;
 import com.example.demo.repository.CodingChallengeRepository;
+import com.example.demo.service.ChallengeRunService;
 import com.example.demo.service.ChallengeService;
-import com.example.demo.service.SubmissionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/challenges")
@@ -22,14 +19,14 @@ public class ChallengeController {
 
     private final ChallengeService challengeService;
     private final CodingChallengeRepository challengeRepository;
-    private final SubmissionService submissionService;
+    private final ChallengeRunService challengeRunService;
 
     public ChallengeController(ChallengeService challengeService,
                                 CodingChallengeRepository challengeRepository,
-                                SubmissionService submissionService) {
+                                ChallengeRunService challengeRunService) {
         this.challengeService = challengeService;
         this.challengeRepository = challengeRepository;
-        this.submissionService = submissionService;
+        this.challengeRunService = challengeRunService;
     }
 
     @GetMapping
@@ -63,13 +60,20 @@ public class ChallengeController {
         return ResponseEntity.ok("Challenge deleted");
     }
 
+    // RUN — visible test cases only, no submission saved
+    @PostMapping("/{id}/run")
+    @PreAuthorize("hasRole('CONTESTANT')")
+    public ResponseEntity<RunCodeResponse> run(@PathVariable Long id,
+                                                @RequestBody RunCodeRequest req) {
+        return ResponseEntity.ok(challengeRunService.run(id, req));
+    }
+
+    // SUBMIT — all test cases, saves submission, awards points
     @PostMapping("/{id}/submit")
     @PreAuthorize("hasRole('CONTESTANT')")
-    public ResponseEntity<SubmissionResponseDto> submit(@PathVariable Long id,
-                                                          @RequestBody SubmissionRequestDto dto,
-                                                          Principal principal) {
-        dto.setChallengeId(id);
-        SubmissionResponseDto response = submissionService.processSubmission(dto, principal.getName());
-        return ResponseEntity.ok(response);
+    public ResponseEntity<SubmitCodeResponse> submit(@PathVariable Long id,
+                                                      @RequestBody SubmitCodeRequest req,
+                                                      Principal principal) {
+        return ResponseEntity.ok(challengeRunService.submit(id, req, principal.getName()));
     }
 }
