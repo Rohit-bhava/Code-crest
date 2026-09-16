@@ -1,114 +1,313 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchChallengeById, submitSolution, clearSubmissionResult } from '../store/slices/challengeSlice';
+import Editor from '@monaco-editor/react';
+import { fetchChallengeById, runSolution, submitSolution, clearResults } from '../store/slices/challengeSlice';
 import { toast } from 'react-toastify';
 
-const diffClass = (d) => {
-  if (d === 'EASY') return 'badge badge-easy';
-  if (d === 'MEDIUM') return 'badge badge-medium';
-  return 'badge badge-hard';
+const LANGUAGES = [
+  { value: 'python', label: 'Python 3' },
+  { value: 'java',   label: 'Java' },
+  { value: 'cpp',    label: 'C++' },
+];
+
+const STARTERS = {
+  python: `# Python 3
+import sys
+input = sys.stdin.readline
+
+def solve():
+    # Read input
+    # Write your solution here
+    pass
+
+solve()
+`,
+  java: `import java.util.Scanner;
+
+public class Solution {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        // Write your solution here
+    }
+}
+`,
+  cpp: `#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    // Write your solution here
+    return 0;
+}
+`,
 };
 
-const verdictClass = (v) => {
-  if (v === 'ACCEPTED') return 'badge badge-accepted';
-  if (v === 'WRONG_ANSWER') return 'badge badge-wrong';
-  if (v === 'TIME_LIMIT_EXCEEDED') return 'badge badge-tle';
-  return 'badge badge-runtime';
+const diffBadge = (d) => {
+  const map = { EASY: 'badge-easy', MEDIUM: 'badge-medium', HARD: 'badge-hard' };
+  return `badge ${map[d] || 'badge-easy'}`;
+};
+
+const verdictStyle = (v) => {
+  if (v === 'ACCEPTED') return { color: '#065f46', background: '#d1fae5' };
+  if (v === 'WRONG_ANSWER') return { color: '#991b1b', background: '#fee2e2' };
+  if (v === 'COMPILATION_ERROR') return { color: '#92400e', background: '#fef3c7' };
+  if (v === 'TIME_LIMIT_EXCEEDED') return { color: '#1e40af', background: '#dbeafe' };
+  return { color: '#5b21b6', background: '#ede9fe' };
 };
 
 export default function ChallengeDetails() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { selected: challenge, loading, error, submissionResult } = useSelector((s) => s.challenges);
+  const { selected: challenge, loading, error, runResult, submitResult, running, submitting } = useSelector((s) => s.challenges);
   const { user } = useSelector((s) => s.auth);
   const isContestant = user?.role === 'CONTESTANT';
 
-  const [code, setCode] = useState('');
-  const [contestId, setContestId] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [lang, setLang] = useState('python');
+  const [code, setCode] = useState(STARTERS['python']);
+  const [activeTab, setActiveTab] = useState('problem'); // 'problem' | 'editor'
 
   useEffect(() => {
     dispatch(fetchChallengeById(id));
-    return () => dispatch(clearSubmissionResult());
+    return () => dispatch(clearResults());
   }, [id, dispatch]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!code.trim()) { toast.error('Please enter your solution code'); return; }
-    setSubmitting(true);
-    const payload = { sourceCode: code };
-    if (contestId) payload.contestId = Number(contestId);
-    const res = await dispatch(submitSolution({ id: Number(id), data: payload }));
-    setSubmitting(false);
+  const handleLangChange = useCallback((e) => {
+    const l = e.target.value;
+    setLang(l);
+    setCode(STARTERS[l]);
+  }, []);
+
+  const handleRun = async () => {
+    if (!code.trim()) { toast.error('Code cannot be empty'); return; }
+    const res = await dispatch(runSolution({ id: Number(id), data: { language: lang, code } }));
+    if (res.meta.requestStatus === 'rejected') toast.error(res.payload || 'Run failed');
+  };
+
+  const handleSubmit = async () => {
+    if (!code.trim()) { toast.error('Code cannot be empty'); return; }
+    const res = await dispatch(submitSolution({ id: Number(id), data: { language: lang, code } }));
     if (res.meta.requestStatus === 'fulfilled') {
-      toast.success(`Submitted! Verdict: ${res.payload.verdict}`);
+      const v = res.payload.status;
+      if (v === 'ACCEPTED') toast.success('✅ Accepted! All test cases passed!');
+      else toast.error(`❌ ${v.replace(/_/g, ' ')}`);
     } else {
       toast.error(res.payload || 'Submission failed');
     }
   };
 
-  if (loading) return <div className="page-loader"><div className="spinner" /></div>;
+  const handleReset = () => setCode(STARTERS[lang]);
+
+  if (loading && !challenge) return <div className="page-loader"><div className="spinner" /></div>;
   if (error) return <div className="page"><div className="alert alert-error">{error}</div></div>;
   if (!challenge) return null;
 
   return (
-    <div className="page">
-      <button className="btn btn-secondary btn-sm" onClick={() => navigate('/challenges')} style={{ marginBottom: 16 }}>
-        ← Back to Challenges
-      </button>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 60px)', overflow: 'hidden' }}>
 
-      <div className="card" style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
-          <h1 style={{ margin: 0, fontSize: '1.4rem', color: '#1e293b' }}>{challenge.title}</h1>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <span className={diffClass(challenge.difficulty)}>{challenge.difficulty}</span>
-            <span style={{ fontSize: '0.85rem', color: '#64748b' }}>🏆 {challenge.basePoints} pts</span>
-            {challenge.timeLimitMs && <span style={{ fontSize: '0.85rem', color: '#64748b' }}>⏱ {challenge.timeLimitMs}ms</span>}
-          </div>
+      {/* Top bar */}
+      <div style={{ background: '#1e1b4b', padding: '10px 20px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid #312e81' }}>
+        <button className="btn btn-secondary btn-sm" onClick={() => navigate('/challenges')}>← Back</button>
+        <span style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', flex: 1 }}>{challenge.title}</span>
+        <span className={diffBadge(challenge.difficulty)}>{challenge.difficulty}</span>
+        <span style={{ color: '#a78bfa', fontSize: '0.85rem' }}>🏆 {challenge.basePoints} pts</span>
+        {challenge.timeLimitMs && <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>⏱ {challenge.timeLimitMs}ms</span>}
+        {/* Tab switcher for mobile */}
+        <div style={{ display: 'flex', gap: 4 }}>
+          <button onClick={() => setActiveTab('problem')} style={{ padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', background: activeTab === 'problem' ? '#6c47ff' : '#312e81', color: '#fff', fontSize: '0.82rem' }}>Problem</button>
+          <button onClick={() => setActiveTab('editor')} style={{ padding: '4px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', background: activeTab === 'editor' ? '#6c47ff' : '#312e81', color: '#fff', fontSize: '0.82rem' }}>Editor</button>
         </div>
-        <div style={{ color: '#334155', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{challenge.description}</div>
-        {challenge.setter && (
-          <p style={{ marginTop: 16, fontSize: '0.82rem', color: '#94a3b8' }}>
-            Set by: {challenge.setter.username || challenge.setter.id}
-          </p>
-        )}
       </div>
 
-      {isContestant && (
-        <div className="card">
-          <h2 style={{ margin: '0 0 16px', fontSize: '1.1rem', color: '#1e293b' }}>Submit Solution</h2>
-          {submissionResult && (
-            <div className={`alert ${submissionResult.verdict === 'ACCEPTED' ? 'alert-success' : 'alert-error'}`} style={{ marginBottom: 16 }}>
-              <strong>Verdict:</strong> <span className={verdictClass(submissionResult.verdict)}>{submissionResult.verdict}</span>
-              {submissionResult.pointsEarned != null && <span style={{ marginLeft: 12 }}>Points: {submissionResult.pointsEarned}</span>}
-              {submissionResult.executionTimeMs != null && <span style={{ marginLeft: 12 }}>Time: {submissionResult.executionTimeMs}ms</span>}
-              {submissionResult.message && <div style={{ marginTop: 6 }}>{submissionResult.message}</div>}
+      {/* Main split layout */}
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+
+        {/* LEFT — Problem Panel */}
+        <div style={{
+          width: '40%', minWidth: 320, overflowY: 'auto', background: '#fff',
+          borderRight: '1px solid #e2e8f0', padding: '20px 24px',
+          display: activeTab === 'editor' ? 'none' : 'block',
+        }}
+          className="problem-panel"
+        >
+          <h2 style={{ margin: '0 0 12px', fontSize: '1.2rem', color: '#1e293b' }}>{challenge.title}</h2>
+
+          <Section title="Problem Description">
+            <p style={{ whiteSpace: 'pre-wrap', color: '#334155', lineHeight: 1.7 }}>{challenge.description}</p>
+          </Section>
+
+          {challenge.inputFormat && (
+            <Section title="Input Format">
+              <p style={{ whiteSpace: 'pre-wrap', color: '#334155' }}>{challenge.inputFormat}</p>
+            </Section>
+          )}
+
+          {challenge.outputFormat && (
+            <Section title="Output Format">
+              <p style={{ whiteSpace: 'pre-wrap', color: '#334155' }}>{challenge.outputFormat}</p>
+            </Section>
+          )}
+
+          {challenge.constraints && (
+            <Section title="Constraints">
+              <pre style={{ background: '#f8fafc', padding: '10px 14px', borderRadius: 8, fontSize: '0.88rem', color: '#475569', margin: 0 }}>{challenge.constraints}</pre>
+            </Section>
+          )}
+
+          {challenge.sampleInput && (
+            <Section title="Sample Input">
+              <pre style={codeBlock}>{challenge.sampleInput}</pre>
+            </Section>
+          )}
+
+          {challenge.sampleOutput && (
+            <Section title="Sample Output">
+              <pre style={codeBlock}>{challenge.sampleOutput}</pre>
+            </Section>
+          )}
+        </div>
+
+        {/* RIGHT — Editor + Results Panel */}
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#0f172a',
+          display: activeTab === 'problem' ? 'none' : 'flex',
+        }}
+          className="editor-panel"
+        >
+          {/* Language selector + action buttons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 16px', background: '#1e293b', borderBottom: '1px solid #334155' }}>
+            <select value={lang} onChange={handleLangChange} style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid #475569', background: '#0f172a', color: '#e2e8f0', fontSize: '0.88rem' }}>
+              {LANGUAGES.map(l => <option key={l.value} value={l.value}>{l.label}</option>)}
+            </select>
+            <button className="btn btn-secondary btn-sm" onClick={handleReset}>↺ Reset</button>
+            <div style={{ flex: 1 }} />
+            {isContestant && (
+              <>
+                <button className="btn btn-sm" onClick={handleRun} disabled={running || submitting}
+                  style={{ background: '#0ea5e9', color: '#fff', minWidth: 80 }}>
+                  {running ? '⏳ Running...' : '▶ Run'}
+                </button>
+                <button className="btn btn-sm" onClick={handleSubmit} disabled={running || submitting}
+                  style={{ background: '#10b981', color: '#fff', minWidth: 90 }}>
+                  {submitting ? '⏳ Submitting...' : '🚀 Submit'}
+                </button>
+              </>
+            )}
+            {!isContestant && (
+              <span style={{ color: '#94a3b8', fontSize: '0.82rem' }}>Login as contestant to run/submit</span>
+            )}
+          </div>
+
+          {/* Monaco Editor */}
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <Editor
+              height="100%"
+              language={lang === 'cpp' ? 'cpp' : lang}
+              value={code}
+              onChange={(v) => setCode(v || '')}
+              theme="vs-dark"
+              options={{
+                fontSize: 14,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                automaticLayout: true,
+                tabSize: 4,
+              }}
+            />
+          </div>
+
+          {/* Results Panel */}
+          {(runResult || submitResult) && (
+            <div style={{ maxHeight: 280, overflowY: 'auto', background: '#1e293b', borderTop: '1px solid #334155', padding: '12px 16px' }}>
+
+              {/* Submit Result Banner */}
+              {submitResult && (
+                <div style={{ ...verdictStyle(submitResult.status), padding: '10px 16px', borderRadius: 8, marginBottom: 12, fontWeight: 700, fontSize: '0.95rem' }}>
+                  {submitResult.status.replace(/_/g, ' ')} — {submitResult.message}
+                  {submitResult.pointsEarned > 0 && <span style={{ marginLeft: 12 }}>+{submitResult.pointsEarned} pts</span>}
+                  <span style={{ marginLeft: 12, fontWeight: 400, fontSize: '0.85rem' }}>{submitResult.passed}/{submitResult.total} passed</span>
+                  {submitResult.executionTime != null && <span style={{ marginLeft: 12, fontWeight: 400, fontSize: '0.85rem' }}>⏱ {submitResult.executionTime}ms</span>}
+                </div>
+              )}
+
+              {/* Run Test Case Results */}
+              {runResult && (
+                <>
+                  {runResult.error && (
+                    <div style={{ background: '#fef3c7', color: '#92400e', padding: '8px 12px', borderRadius: 6, marginBottom: 10, fontSize: '0.85rem' }}>
+                      <strong>Error:</strong>
+                      <pre style={{ margin: '4px 0 0', whiteSpace: 'pre-wrap', fontSize: '0.82rem' }}>{runResult.error}</pre>
+                    </div>
+                  )}
+                  <div style={{ color: '#94a3b8', fontSize: '0.82rem', marginBottom: 8 }}>
+                    Test Results: <strong style={{ color: '#e2e8f0' }}>{runResult.passed}/{runResult.total} passed</strong>
+                  </div>
+                  {runResult.testCases?.map((tc) => (
+                    <TestCaseCard key={tc.testCaseNumber} tc={tc} />
+                  ))}
+                </>
+              )}
             </div>
           )}
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label className="form-label">Contest ID (optional)</label>
-              <input type="number" className="form-control" value={contestId} onChange={(e) => setContestId(e.target.value)} placeholder="Leave blank for practice" style={{ maxWidth: 200 }} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Source Code *</label>
-              <textarea
-                className="form-control"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                placeholder="Paste your solution here..."
-                rows={12}
-                style={{ fontFamily: 'monospace', fontSize: '0.9rem' }}
-              />
-            </div>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
-              {submitting ? 'Submitting...' : 'Submit Solution'}
-            </button>
-          </form>
         </div>
-      )}
+      </div>
+
+      {/* Responsive: show both panels side by side on desktop */}
+      <style>{`
+        @media (min-width: 900px) {
+          .problem-panel { display: block !important; }
+          .editor-panel  { display: flex !important; }
+        }
+      `}</style>
     </div>
   );
 }
+
+function Section({ title, children }) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div style={{ fontWeight: 700, fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#6c47ff', marginBottom: 6 }}>{title}</div>
+      {children}
+    </div>
+  );
+}
+
+function TestCaseCard({ tc }) {
+  const passed = tc.status === 'PASSED';
+  return (
+    <div style={{ background: '#0f172a', borderRadius: 8, padding: '10px 14px', marginBottom: 8, border: `1px solid ${passed ? '#065f46' : '#991b1b'}` }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+        <span style={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.88rem' }}>Test Case {tc.testCaseNumber}</span>
+        <span style={{ fontWeight: 700, fontSize: '0.82rem', color: passed ? '#34d399' : '#f87171' }}>
+          {passed ? '✓ Passed' : '✗ Failed'}
+        </span>
+      </div>
+      {tc.input !== '[hidden]' && (
+        <Row label="Input" value={tc.input} />
+      )}
+      {tc.expectedOutput !== '[hidden]' && (
+        <Row label="Expected" value={tc.expectedOutput} />
+      )}
+      <Row label="Got" value={tc.actualOutput || '(no output)'} highlight={!passed} />
+      {tc.error && <Row label="Error" value={tc.error} highlight />}
+    </div>
+  );
+}
+
+function Row({ label, value, highlight }) {
+  return (
+    <div style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: '0.82rem' }}>
+      <span style={{ color: '#64748b', minWidth: 60 }}>{label}:</span>
+      <pre style={{ margin: 0, color: highlight ? '#f87171' : '#94a3b8', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{value}</pre>
+    </div>
+  );
+}
+
+const codeBlock = {
+  background: '#f1f5f9', padding: '10px 14px', borderRadius: 8,
+  fontSize: '0.88rem', color: '#1e293b', margin: 0, whiteSpace: 'pre-wrap',
+  border: '1px solid #e2e8f0',
+};
