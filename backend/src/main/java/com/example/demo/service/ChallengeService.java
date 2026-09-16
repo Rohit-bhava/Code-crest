@@ -8,8 +8,6 @@ import com.example.demo.repository.CodingChallengeRepository;
 import com.example.demo.repository.SystemUserRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class ChallengeService {
 
@@ -22,10 +20,6 @@ public class ChallengeService {
         this.systemUserRepository = systemUserRepository;
     }
 
-    public List<CodingChallenge> getAllChallenges() {
-        return challengeRepository.findAll();
-    }
-
     public CodingChallenge getChallengeById(Long id) {
         return challengeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Challenge not found with id: " + id));
@@ -34,32 +28,32 @@ public class ChallengeService {
     public void createChallenge(ChallengeCreationDto dto, String username) {
         SystemUser setter = systemUserRepository.findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
-
         CodingChallenge challenge = new CodingChallenge();
-        challenge.setTitle(dto.getTitle());
-        challenge.setDescription(dto.getDescription());
-        challenge.setDifficulty(dto.getDifficulty());
-        challenge.setBasePoints(dto.getBasePoints());
-        challenge.setTimeLimitMs(dto.getTimeLimitMs());
+        mapDto(challenge, dto);
         challenge.setSetter(setter);
         challengeRepository.save(challenge);
     }
 
     public void updateChallenge(Long id, ChallengeCreationDto dto, String username) {
         CodingChallenge challenge = getChallengeById(id);
-        SystemUser requester = systemUserRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
-
-        challenge.setTitle(dto.getTitle());
-        challenge.setDescription(dto.getDescription());
-        challenge.setDifficulty(dto.getDifficulty());
-        challenge.setBasePoints(dto.getBasePoints());
-        challenge.setTimeLimitMs(dto.getTimeLimitMs());
+        mapDto(challenge, dto);
         challengeRepository.save(challenge);
     }
 
     public void deleteChallenge(Long id) {
-        CodingChallenge challenge = getChallengeById(id);
-        challengeRepository.delete(challenge);
+        challengeRepository.delete(getChallengeById(id));
+    }
+
+    private void mapDto(CodingChallenge c, ChallengeCreationDto dto) {
+        c.setTitle(dto.getTitle());
+        c.setDescription(dto.getDescription());
+        c.setInputFormat(dto.getInputFormat());
+        c.setOutputFormat(dto.getOutputFormat());
+        c.setConstraints(dto.getConstraints());
+        c.setSampleInput(dto.getSampleInput());
+        c.setSampleOutput(dto.getSampleOutput());
+        c.setDifficulty(dto.getDifficulty());
+        c.setBasePoints(dto.getBasePoints());
+        c.setTimeLimitMs(dto.getTimeLimitMs());
     }
 }
