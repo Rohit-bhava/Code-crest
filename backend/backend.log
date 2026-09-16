@@ -198,3 +198,20 @@ Hibernate: update contest_rankings set contest_id=?,contestant_id=?,current_scor
 2026-09-16T10:21:22.453+05:30  INFO 17012 --- [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
 2026-09-16T10:21:22.454+05:30  INFO 17012 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
 2026-09-16T10:21:22.455+05:30  INFO 17012 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.username=?
+Hibernate: select cc1_0.id,cc1_0.base_points,cc1_0.constraints,cc1_0.description,cc1_0.difficulty,cc1_0.input_format,cc1_0.output_format,cc1_0.sample_input,cc1_0.sample_output,cc1_0.setter_id,cc1_0.time_limit_ms,cc1_0.title from coding_challenges cc1_0 limit ?,?
+Hibernate: select su1_0.id,su1_0.password,su1_0.role,su1_0.username from system_users su1_0 where su1_0.id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+Hibernate: select tc1_0.challenge_id,tc1_0.id,tc1_0.expected_output,tc1_0.hidden,tc1_0.input,tc1_0.test_case_order from challenge_test_cases tc1_0 where tc1_0.challenge_id=?
+
+c:\Users\Sanjaikumar\AppData\Local\amypo\workspace\13954_9001_1_14273\backend>
