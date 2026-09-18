@@ -65,7 +65,7 @@ export default function ChallengeList({ challenges, loading, onPageChange }) {
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/challenges/${c.id}`)}>View</button>
-                    {isAdmin && (
+                    {canEdit && (
                       <button className="btn btn-primary btn-sm" onClick={() => navigate(`/challenges/edit/${c.id}`)}>Edit</button>
                     )}
                     {isAdmin && (
