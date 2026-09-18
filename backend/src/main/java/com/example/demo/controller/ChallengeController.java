@@ -54,7 +54,7 @@ public class ChallengeController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'CONTESTANT')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ChallengeCreationDto dto, Principal principal) {
         challengeService.updateChallenge(id, dto, principal.getName());
         return ResponseEntity.ok("Challenge updated");

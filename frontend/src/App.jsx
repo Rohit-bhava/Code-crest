@@ -42,7 +42,7 @@ export default function App() {
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/challenges" element={<PrivateRoute><Challenges /></PrivateRoute>} />
         <Route path="/challenges/create" element={<RoleRoute roles={['ADMIN']}><CreateChallenge /></RoleRoute>} />
-        <Route path="/challenges/edit/:id" element={<RoleRoute roles={['ADMIN', 'CONTESTANT']}><EditChallenge /></RoleRoute>} />
+        <Route path="/challenges/edit/:id" element={<RoleRoute roles={['ADMIN']}><EditChallenge /></RoleRoute>} />
         <Route path="/challenges/:id" element={<PrivateRoute><ChallengeDetails /></PrivateRoute>} />
         <Route path="/contests" element={<PrivateRoute><Contests /></PrivateRoute>} />
         <Route path="/contests/create" element={<RoleRoute roles={['ADMIN']}><CreateContest /></RoleRoute>} />
