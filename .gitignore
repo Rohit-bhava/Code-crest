@@ -1,0 +1,58 @@
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+.pnp
+.pnp.js
+
+# ── Environment / Secrets ─────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Spring Boot / Java build outputs ─────────────────────────
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# ── React / JS build outputs ─────────────────────────────────
+build/
+dist/
+coverage/
+
+# ── Log and error files ───────────────────────────────────────
+*.log
+*.err
+
+# ── OS temporary files ────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE files ─────────────────────────────────────────────────
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+*.suo
+*.user
+.project
+.classpath
+.settings/
+.factorypath
+.springBeans
+.sts4-cache
+.apt_generated
+nbproject/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# ── Maven wrapper (keep the jar, ignore local overrides) ──────
+!.mvn/wrapper/maven-wrapper.jar
+
+# ── Misc ──────────────────────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
